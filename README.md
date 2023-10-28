@@ -38,3 +38,18 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## Docker
+
+```bash
+# launch this application within Docker
+$ docker build . -t my-app
+$ docker run -p 3001:3001 my-app
+```
+
+Then go to this link [http://localhost:3001/api](http://localhost:3001/api) to see if the server is running.
+
+```bash
+# run tests within Docker
+$ docker run my-app sh -c "TEST_COMMAND"
+```
