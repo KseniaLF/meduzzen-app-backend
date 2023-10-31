@@ -1,0 +1,29 @@
+# version: '3'
+# services:
+#   app:
+#     build: .
+#     command: npm run start:dev
+#     ports:
+#       - 3001:3001
+#     environment:
+#       PORT: 3001
+#     working_dir: /app
+#     volumes:
+#       - .:/app
+#     restart: always
+
+version: '3'
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    command: npm run start:dev
+    ports:
+      - 3001:3001
+    restart: always
