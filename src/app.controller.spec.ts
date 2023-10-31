@@ -15,12 +15,14 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return a successful server health status', () => {
-      expect(appController.healthCheck()).toEqual({
+    it('should return a successful server health status', async () => {
+      const expectedResponse = {
         status_code: 200,
         detail: 'ok',
         result: 'working',
-      });
+      };
+      const response = await appController.healthCheck();
+      expect(response).toEqual(expectedResponse);
     });
   });
 });
