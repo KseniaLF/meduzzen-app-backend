@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
   healthCheck() {
     return {
-      status_code: 200,
+      status_code: HttpStatus.OK,
       detail: 'ok',
       result: 'working',
     };
