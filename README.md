@@ -53,3 +53,8 @@ Then go to this link [http://localhost:3001/api](http://localhost:3001/api) to s
 # run tests within Docker
 $ docker run my-app sh -c "TEST_COMMAND"
 ```
+
+```bash
+# run this app with docker-compose
+$ docker compose up
+```

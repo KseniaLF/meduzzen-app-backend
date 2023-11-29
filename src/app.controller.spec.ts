@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { HttpStatus } from '@nestjs/common';
+import { IRes } from './common/interfaces';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -16,8 +18,8 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return a successful server health status', async () => {
-      const expectedResponse = {
-        status_code: 200,
+      const expectedResponse: IRes = {
+        status_code: HttpStatus.OK,
         detail: 'ok',
         result: 'working',
       };
