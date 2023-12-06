@@ -15,9 +15,6 @@ export class Auth {
   id: string;
 
   @Column()
-  userId: string;
-
-  @Column()
   passwordHash: string;
 
   @OneToOne(() => User)
