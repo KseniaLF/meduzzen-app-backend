@@ -8,11 +8,11 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
-  HttpCode,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities';
 
 @Controller('user')
 export class UserController {
@@ -20,23 +20,27 @@ export class UserController {
 
   @Post()
   @UsePipes(new ValidationPipe())
-  create(@Body() createUserDto: CreateUserDto): Promise<void> {
+  create(@Body() createUserDto: CreateUserDto): Promise<string> {
     return this.userService.create(createUserDto);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<{ users: User[] }> {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<User> {
     return this.userService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @UsePipes(new ValidationPipe())
+  update(
+    @Body() updateUserDto: UpdateUserDto,
+    @Param('id') id: string,
+  ): Promise<string> {
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')

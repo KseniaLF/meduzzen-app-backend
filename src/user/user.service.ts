@@ -11,15 +11,18 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Auth } from './entities/auth.entity';
 import { User } from './entities/user.entity';
+import { PaginationResult } from 'src/common/interfaces';
+import { PaginationService } from 'src/common/service/pagination.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Auth) private readonly authRepository: Repository<Auth>,
+    private readonly paginationService: PaginationService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<void> {
+  async create(createUserDto: CreateUserDto): Promise<string> {
     const existUser = await this.userRepository.findOne({
       where: { email: createUserDto.email },
     });
@@ -34,24 +37,41 @@ export class UserService {
       user,
       passwordHash: await argon2.hash(createUserDto.password),
     });
+
+    return 'User created successfully';
   }
 
-  async findAll() {
-    const users = await this.userRepository.find();
-    return { users };
+  // async findAll(): Promise<{ users: User[] }> {
+  //   const users = await this.userRepository.find();
+  //   return { users };
+  // }
+  async findAll(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginationResult<User>> {
+    return this.paginationService.findAll(
+      this.userRepository,
+      paginationOptions,
+    );
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<User> {
     const existUser = await this.userRepository.findOneBy({ id });
     if (!existUser) throw new NotFoundException('User not found');
     return existUser;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<string> {
+    const existUser = await this.findOne(id);
+    if (!existUser) throw new NotFoundException('User not found');
+
+    await this.userRepository.update(id, {
+      email: updateUserDto.email,
+    });
+
+    return 'User updated successfully';
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<string> {
     await this.userRepository.delete(id);
     return 'User deleted successfully';
   }
