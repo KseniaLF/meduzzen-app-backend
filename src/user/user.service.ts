@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
@@ -38,14 +42,17 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    return this.userRepository.findOneBy({ id });
+    const existUser = await this.userRepository.findOneBy({ id });
+    if (!existUser) throw new NotFoundException('User not found');
+    return existUser;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    await this.userRepository.delete(id);
+    return 'User deleted successfully';
   }
 }

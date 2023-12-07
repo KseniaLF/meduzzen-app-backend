@@ -17,8 +17,7 @@ export class Auth {
   @Column()
   passwordHash: string;
 
-  @OneToOne(() => User)
-  @JoinColumn()
+  @OneToOne(() => User, (user) => user.auth)
   user: User;
 
   @CreateDateColumn()
