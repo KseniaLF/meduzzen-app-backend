@@ -58,3 +58,31 @@ $ docker run my-app sh -c "TEST_COMMAND"
 # run this app with docker-compose
 $ docker compose up
 ```
+
+## Migrations
+
+Once you setup connection options you can create a new migration using CLI:
+
+```bash
+$ npm run migration:create
+```
+
+To automatically generate migration files with the changes made to the schema, use the following command:
+
+```bash
+$ npm run migration:generate
+```
+
+Use this command to run the migration:
+
+```bash
+$ npm run migration:run
+```
+
+If for some reason you want to revert the changes, you can run:
+
+```bash
+$ npm run migration:revert
+```
+
+The migrations will be saved in the folder `src/migrations`
