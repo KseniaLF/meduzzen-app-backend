@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Body,
+  Query,
   Patch,
   Param,
   Delete,
@@ -13,6 +14,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities';
+import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 
 @Controller('user')
 export class UserController {
@@ -25,8 +27,8 @@ export class UserController {
   }
 
   @Get()
-  findAll(): Promise<{ users: User[] }> {
-    return this.userService.findAll();
+  findAll(@Query() query: PaginationOptions): Promise<PaginationResult<User>> {
+    return this.userService.findAll(query);
   }
 
   @Get(':id')

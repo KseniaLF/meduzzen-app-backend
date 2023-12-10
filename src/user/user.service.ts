@@ -11,7 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Auth } from './entities/auth.entity';
 import { User } from './entities/user.entity';
-import { PaginationResult } from 'src/common/interfaces';
+import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { PaginationService } from 'src/common/service/pagination.service';
 
 @Injectable()
@@ -41,10 +41,6 @@ export class UserService {
     return 'User created successfully';
   }
 
-  // async findAll(): Promise<{ users: User[] }> {
-  //   const users = await this.userRepository.find();
-  //   return { users };
-  // }
   async findAll(
     paginationOptions: PaginationOptions,
   ): Promise<PaginationResult<User>> {
