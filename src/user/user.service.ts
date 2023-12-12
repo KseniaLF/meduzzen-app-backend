@@ -1,7 +1,7 @@
 import {
   Injectable,
-  BadRequestException,
   NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -27,10 +27,11 @@ export class UserService {
       where: { email: createUserDto.email },
     });
 
-    if (existUser) throw new BadRequestException('This email already exists');
+    if (existUser) throw new ConflictException('This email already exists');
 
     const user = await this.userRepository.save({
       email: createUserDto.email,
+      name: createUserDto.name,
     });
 
     await this.authRepository.save({
@@ -61,13 +62,16 @@ export class UserService {
     if (!existUser) throw new NotFoundException('User not found');
 
     await this.userRepository.update(id, {
-      email: updateUserDto.email,
+      name: updateUserDto.name,
     });
 
     return 'User updated successfully';
   }
 
   async remove(id: string): Promise<string> {
+    const existUser = await this.userRepository.findOneBy({ id });
+    if (!existUser) throw new NotFoundException('User not found');
+
     await this.userRepository.delete(id);
     return 'User deleted successfully';
   }

@@ -17,7 +17,10 @@ export class User {
   @Column()
   email: string;
 
-  @OneToOne(() => Auth, { cascade: true })
+  @Column()
+  name: string;
+
+  @OneToOne(() => Auth)
   @JoinColumn()
   auth: Auth;
 
