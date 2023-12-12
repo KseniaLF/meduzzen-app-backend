@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -15,13 +14,11 @@ export class Auth {
   id: string;
 
   @Column()
-  userId: string;
-
-  @Column()
   passwordHash: string;
 
-  @OneToOne(() => User)
-  @JoinColumn()
+  @OneToOne(() => User, (user) => user.auth, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @CreateDateColumn()

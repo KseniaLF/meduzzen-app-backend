@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { CONNECTION } from './db.connection';
 
 import { DataSource, DataSourceOptions } from 'typeorm';
@@ -10,12 +11,14 @@ const AppDataSource = new DataSource({
   migrationsRun: true,
 });
 
+const logger = new Logger('Data Source');
+
 AppDataSource.initialize()
   .then(() => {
-    console.log('Data Source has been initialized!');
+    logger.log('Data Source has been initialized!');
   })
   .catch((err) => {
-    console.error('Error during Data Source initialization', err);
+    logger.error('Error during Data Source initialization', err);
   });
 
 export default AppDataSource;
