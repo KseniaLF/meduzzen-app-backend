@@ -9,12 +9,18 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities';
 import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
+import { SignInDto } from './dto';
+import { AuthGuard } from './auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -24,6 +30,19 @@ export class UserController {
   @UsePipes(new ValidationPipe())
   create(@Body() createUserDto: CreateUserDto): Promise<string> {
     return this.userService.create(createUserDto);
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe())
+  signIn(@Body() signInDto: SignInDto): Promise<string> {
+    return this.userService.signIn(signInDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('me')
+  getProfile(@Request() req) {
+    return this.userService.findUserByEmail(req.user.email);
   }
 
   @Get()
