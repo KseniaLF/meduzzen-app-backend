@@ -20,7 +20,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities';
 import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { SignInDto } from './dto';
-import { AuthGuard } from './auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -39,10 +39,10 @@ export class UserController {
     return this.userService.signIn(signInDto);
   }
 
-  @UseGuards(AuthGuard)
   @Get('me')
+  @UseGuards(JwtAuthGuard)
   getProfile(@Request() req) {
-    return this.userService.findUserByEmail(req.user.email);
+    return console.log(req.user);
   }
 
   @Get()

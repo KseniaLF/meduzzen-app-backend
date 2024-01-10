@@ -5,18 +5,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Auth } from './entities/auth.entity';
 import { PaginationService } from 'src/common/service/pagination.service';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Auth]),
+    PassportModule,
+
     JwtModule.register({
-      global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '120s' },
+      signOptions: { expiresIn: '20m' },
     }),
   ],
+  exports: [PassportModule],
   controllers: [UserController],
-  providers: [UserService, PaginationService],
+  providers: [UserService, PaginationService, JwtStrategy],
 })
 export class UserModule {}
