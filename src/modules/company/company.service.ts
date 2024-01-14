@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { Company } from './entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities';
+import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
+import { PaginationService } from 'src/common/service/pagination.service';
 
 @Injectable()
 export class CompanyService {
@@ -13,6 +15,8 @@ export class CompanyService {
     private readonly companyRepository: Repository<Company>,
 
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+
+    private readonly paginationService: PaginationService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto, email: string) {
@@ -29,9 +33,13 @@ export class CompanyService {
     return company;
   }
 
-  async findAll() {
-    const companies = await this.companyRepository.find({});
-    return companies;
+  async findAll(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginationResult<Company>> {
+    return this.paginationService.findAll(
+      this.companyRepository,
+      paginationOptions,
+    );
   }
 
   async findOne(id: string) {

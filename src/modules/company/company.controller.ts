@@ -10,12 +10,15 @@ import {
   Request,
   UsePipes,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
 import { OwnershipGuard } from 'src/modules/company/guard/ownership.guard';
+import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
+import { Company } from './entities';
 
 @Controller('company')
 @UseGuards(JwtAuthGuard)
@@ -29,8 +32,10 @@ export class CompanyController {
   }
 
   @Get()
-  findAll() {
-    return this.companyService.findAll();
+  findAll(
+    @Query() query: PaginationOptions,
+  ): Promise<PaginationResult<Company>> {
+    return this.companyService.findAll(query);
   }
 
   @Get(':id')
