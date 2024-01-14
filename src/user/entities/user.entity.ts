@@ -3,11 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Auth } from './auth.entity';
+import { Company } from '../../modules/company/entities/company.entity';
+// import { Company } from 'src/modules/company/entities';
 
 @Entity()
 export class User {
@@ -23,6 +26,9 @@ export class User {
   @OneToOne(() => Auth)
   @JoinColumn()
   auth: Auth;
+
+  @OneToMany(() => Company, (company) => company.owner)
+  companies: Company[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -9,6 +9,7 @@ import { AppLoggerMiddleware } from './common/middleware/logger.middleware';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformResponseInterceptor } from './common/interceptor/response.interceptor';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
+import { CompanyModule } from './modules/company/company.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { HttpExceptionFilter } from './common/filter/http-exception.filter';
     }),
 
     UserModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [

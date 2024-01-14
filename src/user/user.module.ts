@@ -8,15 +8,16 @@ import { PaginationService } from 'src/common/service/pagination.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
+import { Company } from '../modules/company/entities/company.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Auth]),
+    TypeOrmModule.forFeature([User, Auth, Company]),
     PassportModule,
 
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '20m' },
+      signOptions: { expiresIn: '200m' },
     }),
   ],
   exports: [PassportModule],
