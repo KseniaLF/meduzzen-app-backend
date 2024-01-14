@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Repository } from 'typeorm';
@@ -29,12 +29,14 @@ export class CompanyService {
     return company;
   }
 
-  findAll() {
-    return `This action returns all company`;
+  async findAll() {
+    const companies = await this.companyRepository.find({});
+    return companies;
   }
 
   async findOne(id: string) {
-    const company = await this.companyRepository.findBy({ id });
+    const company = await this.companyRepository.findOneBy({ id });
+    if (!company) throw new NotFoundException();
     return company;
   }
 
@@ -47,7 +49,8 @@ export class CompanyService {
     return { message: 'Company data updated successfully' };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} company`;
+  async remove(id: string) {
+    await this.companyRepository.delete(id);
+    return { message: 'Company deleted successfully' };
   }
 }

@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { Auth } from './auth.entity';
 import { Company } from '../../modules/company/entities/company.entity';
-// import { Company } from 'src/modules/company/entities';
 
 @Entity()
 export class User {
