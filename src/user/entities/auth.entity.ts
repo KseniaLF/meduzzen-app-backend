@@ -16,9 +16,7 @@ export class Auth {
   @Column()
   passwordHash: string;
 
-  @OneToOne(() => User, (user) => user.auth, {
-    onDelete: 'CASCADE',
-  })
+  @OneToOne(() => User, (user) => user.auth, { onDelete: 'CASCADE' })
   user: User;
 
   @CreateDateColumn()

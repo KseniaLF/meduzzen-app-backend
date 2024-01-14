@@ -1,7 +1,9 @@
+import { SignInDto } from './dto/sign-in.dto';
 import {
   Injectable,
   NotFoundException,
   ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,6 +15,7 @@ import { Auth } from './entities/auth.entity';
 import { User } from './entities/user.entity';
 import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { PaginationService } from 'src/common/service/pagination.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
@@ -20,6 +23,7 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Auth) private readonly authRepository: Repository<Auth>,
     private readonly paginationService: PaginationService,
+    private jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<string> {
@@ -42,6 +46,20 @@ export class UserService {
     return 'User created successfully';
   }
 
+  async signIn(signInDto: SignInDto): Promise<any> {
+    const { email, password } = signInDto;
+    const user = await this.userRepository.findOneBy({ email });
+    const auth = await this.authRepository.findOneBy({ id: user.id });
+
+    const isPasssMatch = await argon2.verify(auth.passwordHash, password);
+    if (!isPasssMatch) throw new UnauthorizedException();
+
+    const payload = { sub: user.id, email: user.email };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
   async findAll(
     paginationOptions: PaginationOptions,
   ): Promise<PaginationResult<User>> {
@@ -53,6 +71,12 @@ export class UserService {
 
   async findOne(id: string): Promise<User> {
     const existUser = await this.userRepository.findOneBy({ id });
+    if (!existUser) throw new NotFoundException('User not found');
+    return existUser;
+  }
+
+  async findUserByEmail(email: string): Promise<User> {
+    const existUser = await this.userRepository.findOneBy({ email });
     if (!existUser) throw new NotFoundException('User not found');
     return existUser;
   }
