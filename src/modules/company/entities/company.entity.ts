@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-enum Status {
+export enum Status {
   PRIVATE = 'private',
   PUBLIC = 'inactive',
 }

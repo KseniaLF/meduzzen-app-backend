@@ -19,6 +19,7 @@ import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
 import { OwnershipGuard } from 'src/modules/company/guard/ownership.guard';
 import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { Company } from './entities';
+import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 
 @Controller('company')
 @UseGuards(JwtAuthGuard)
@@ -48,6 +49,16 @@ export class CompanyController {
   @UsePipes(new ValidationPipe())
   update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
     return this.companyService.update(id, updateCompanyDto);
+  }
+
+  @Patch(':id/visibility')
+  @UseGuards(OwnershipGuard)
+  @UsePipes(new ValidationPipe())
+  updateVisibility(
+    @Param('id') id: string,
+    @Body() updateVisibilityDto: UpdateVisibilityDto,
+  ) {
+    return this.companyService.updateVisibility(id, updateVisibilityDto);
   }
 
   @Delete(':id')

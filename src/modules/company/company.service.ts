@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities';
 import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { PaginationService } from 'src/common/service/pagination.service';
+import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 
 @Injectable()
 export class CompanyService {
@@ -55,6 +56,14 @@ export class CompanyService {
     });
 
     return { message: 'Company data updated successfully' };
+  }
+
+  async updateVisibility(id: string, updateStatus: UpdateVisibilityDto) {
+    await this.companyRepository.update(id, {
+      status: updateStatus.status,
+    });
+
+    return { message: 'Company visibility updated successfully' };
   }
 
   async remove(id: string) {
