@@ -9,10 +9,11 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { Company } from '../modules/company/entities/company.entity';
+import { UserActions } from './entities/company-actions.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Auth, Company]),
+    TypeOrmModule.forFeature([User, Auth, UserActions, Company]),
     PassportModule,
 
     JwtModule.register({

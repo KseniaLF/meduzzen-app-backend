@@ -5,10 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from './entities';
 import { User } from '../../user/entities';
 import { PaginationService } from 'src/common/service/pagination.service';
+import { UserActions } from 'src/user/entities/company-actions.entity';
+import { ActivityController } from './controllers/activity.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Company, User])],
-  controllers: [CompanyController],
+  imports: [TypeOrmModule.forFeature([Company, User, UserActions])],
+  controllers: [CompanyController, ActivityController],
   providers: [CompanyService, PaginationService],
 })
 export class CompanyModule {}
