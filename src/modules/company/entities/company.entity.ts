@@ -6,9 +6,11 @@ import {
   Entity,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Invitation } from './invitation.entity';
 
 export enum Status {
   PRIVATE = 'private',
@@ -17,7 +19,7 @@ export enum Status {
 
 @Entity()
 export class Company {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -45,6 +47,9 @@ export class Company {
   // users to whom this company has sent an invitation to join
   @ManyToMany(() => UserActions, (user) => user.companyInvitations)
   userInvitations: UserActions[];
+
+  @OneToMany(() => Invitation, (invitation) => invitation.company)
+  invitations: Invitation[];
 
   // users who have sent a joining request to this company
   @ManyToMany(() => UserActions, (user) => user.companyRequests)

@@ -10,7 +10,7 @@ import { User } from './user.entity';
 
 @Entity()
 export class Auth {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()

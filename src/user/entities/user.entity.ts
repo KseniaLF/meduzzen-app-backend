@@ -14,7 +14,7 @@ import { Company } from '../../modules/company/entities';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()

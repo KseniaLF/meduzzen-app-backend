@@ -6,7 +6,7 @@ import {
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Repository } from 'typeorm';
-import { Company } from './entities';
+import { Company, Invitation } from './entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { PaginationService } from 'src/common/service/pagination.service';
@@ -26,6 +26,9 @@ export class CompanyService {
 
     @InjectRepository(UserActions)
     private readonly userActionsRepository: Repository<UserActions>,
+
+    @InjectRepository(Invitation)
+    private readonly invitationRepository: Repository<Invitation>,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto, email: string) {
@@ -82,11 +85,12 @@ export class CompanyService {
   // ---------
 
   async getInvitationsForMe(email: string) {
-    const allInvitationsForMe = await this.userActionsRepository.findOne({
-      relations: ['companyInvitations'],
-      where: { user: { email } },
+    const allInvitationsForMe = await this.invitationRepository.find({
+      relations: ['user'],
+      // where: { user: { email } },
     });
-    return allInvitationsForMe.companyInvitations;
+    console.log(allInvitationsForMe);
+    return allInvitationsForMe;
   }
 
   async sendInvitation(
@@ -94,39 +98,57 @@ export class CompanyService {
     invitedUserEmail: string,
     companyId: string,
   ) {
-    // const invitedUser = await this.userRepository.findOne({
-    //   where: { email: invitedUserEmail },
-    // });
+    const user = await this.userRepository.findOne({
+      where: { email: invitedUserEmail },
+    });
+
+    let invitedUser = await this.userActionsRepository.findOne({
+      relations: ['user', 'invitations', 'invitations.company'],
+      where: { user: { email: invitedUserEmail } },
+    });
+    console.log(invitedUser);
+    if (!invitedUser) {
+      invitedUser = await this.userActionsRepository.save({ user });
+      console.log(invitedUser);
+    }
 
     // // Сохраняем объект UserActions в базу данных
     // return this.userActionsRepository.save({ user: invitedUser });
 
-    const invitedUser = await this.userActionsRepository.findOne({
-      relations: ['user', 'companyInvitations'],
-      where: { user: { email: invitedUserEmail } },
-    });
-    console.log(invitedUser);
+    // const invitedUser = await this.userRepository.findOne({
+    //   where: { email: invitedUserEmail },
+    // });
+    // console.log(invitedUser);
+    // return invitedUser;
 
-    if (!invitedUser) console.log('invitedUser');
+    // const invitedUser = await this.userActionsRepository.findOne({
+    //   relations: ['user', 'companyInvitations'],
+
+    //   // where: { user: { email: invitedUserEmail } },
+    // });
+    // console.log(invitedUser);
+    // return 2;
+    if (!invitedUser) {
+      throw new NotFoundException(`User with email ${invitedUser} not found`);
+    }
 
     const company = await this.companyRepository.findOne({
       where: { id: companyId },
     });
-
     if (!company) {
       throw new NotFoundException(`Company with ID ${companyId} not found`);
     }
 
-    const isCompanyAlreadyInvited = invitedUser.companyInvitations.some(
-      (invitedCompany) => invitedCompany.id === company.id,
+    const isCompanyAlreadyInvited = invitedUser.invitations.some(
+      (invitation) => invitation.company.id === company.id,
     );
 
     if (!isCompanyAlreadyInvited) {
-      invitedUser.companyInvitations = [
-        ...invitedUser.companyInvitations,
+      const data = await this.invitationRepository.save({
+        user: invitedUser,
         company,
-      ];
-      const data = await this.userActionsRepository.save(invitedUser);
+      });
+
       return {
         message: `The company with identifier ${companyId} successfully invited the user ${invitedUserEmail}`,
         data,
@@ -138,21 +160,14 @@ export class CompanyService {
     };
   }
 
-  async deleteInvitation(invitedUserEmail: string, companyId = '20') {
-    const invitedUser = await this.userActionsRepository.findOne({
-      relations: ['user', 'companyInvitations'],
-      where: {
-        user: { email: invitedUserEmail },
-        companyInvitations: { id: companyId },
-      },
+  async deleteInvitation(invitationId: string) {
+    const invitationForMeById = await this.invitationRepository.findOne({
+      where: { id: invitationId },
     });
-    if (!invitedUser) throw new NotFoundException('Invitation not found');
+    if (!invitationForMeById)
+      throw new NotFoundException('Invitation not found');
 
-    invitedUser.companyInvitations = invitedUser.companyInvitations.filter(
-      (company) => company.id != companyId,
-    );
-    await this.userActionsRepository.save(invitedUser);
-
+    await this.invitationRepository.delete(invitationId);
     return { message: 'Invitation successfully delete' };
   }
 }

@@ -10,10 +10,11 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { Company } from '../modules/company/entities/company.entity';
 import { UserActions } from './entities/company-actions.entity';
+import { Invitation } from '../modules/company/entities';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Auth, UserActions, Company]),
+    TypeOrmModule.forFeature([User, Auth, UserActions, Company, Invitation]),
     PassportModule,
 
     JwtModule.register({

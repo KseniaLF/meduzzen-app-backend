@@ -10,10 +10,11 @@ import {
 } from 'typeorm';
 import { Company } from '../../modules/company/entities/company.entity';
 import { User } from './user.entity';
+import { Invitation } from '../../modules/company/entities';
 
 @Entity()
 export class UserActions {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @OneToOne(() => User, (user) => user.actions, { onDelete: 'CASCADE' })
@@ -32,6 +33,9 @@ export class UserActions {
   @ManyToMany(() => Company, (company) => company.userInvitations)
   @JoinTable()
   companyInvitations: Company[];
+
+  @OneToMany(() => Invitation, (invitation) => invitation.user)
+  invitations: Invitation[];
 
   // companies to which this user has sent a request to join
   @ManyToMany(() => Company, (company) => company.userRequests)
