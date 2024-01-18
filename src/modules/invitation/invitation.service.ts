@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from '../company/entities';
 import { Repository } from 'typeorm';
 import { User, UserActions } from 'src/user/entities';
 import { Invitation } from './entities';
+import { SendInvitationParams } from './dto/create-invitation.dto';
 
 @Injectable()
 export class InvitationService {
@@ -54,17 +59,17 @@ export class InvitationService {
     return invitation;
   }
 
-  // ⚠️❌ there's no check to see if there's access to invitation
-  //TODO : check it good enough ⚠️
-  async sendInvitation(
-    invitedUserEmail: string,
-    companyId: string,
-    ownerEmail: string,
-  ) {
+  async sendInvitation({
+    invitedUserEmail,
+    companyId,
+    ownerEmail,
+    message,
+  }: SendInvitationParams) {
     let invitedUser = await this.userActionsRepository.findOne({
       relations: ['user', 'invitations', 'invitations.company'],
       where: { user: { email: invitedUserEmail } },
     });
+
     if (!invitedUser) {
       const user = await this.userRepository.findOne({
         where: { email: invitedUserEmail },
@@ -75,12 +80,16 @@ export class InvitationService {
 
     const company = await this.companyRepository.findOne({
       where: { id: companyId },
+      relations: ['owner'],
     });
+    if (company.owner.email !== ownerEmail)
+      throw new ForbiddenException('No access');
+
     if (!company) {
       throw new NotFoundException(`Company with ID ${companyId} not found`);
     }
 
-    const isCompanyAlreadyInvited = invitedUser.invitations.some(
+    const isCompanyAlreadyInvited = invitedUser?.invitations?.some(
       (invitation) => invitation.company.id === company.id,
     );
 
@@ -94,6 +103,7 @@ export class InvitationService {
         user: invitedUser,
         company,
         owner,
+        message,
       });
 
       return {
