@@ -39,20 +39,18 @@ export class InvitationService {
   //  invitations i send to users to join my companies
   async getAllMyInvitations(email: string) {
     const allInvitation = await this.invitationRepository.find({
-      // 'user' - this is user to whom i send invitation to join my company
+      // 'user' - this is user to whom I send invitation to join my company
       relations: ['user.user', 'company', 'owner'],
       where: { owner: { email } },
     });
     return allInvitation;
   }
 
-  // ⚠️❌ there's no check to see if there's access to invitation
   async getInvitationById(id: string) {
     const invitation = await this.invitationRepository.findOne({
       relations: ['user.user', 'company', 'owner'],
       where: { id },
     });
-    if (!invitation) throw new NotFoundException();
     return invitation;
   }
 

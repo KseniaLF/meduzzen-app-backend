@@ -10,6 +10,7 @@ import {
 import { InvitationService } from './invitation.service';
 import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
 import { EditPermissionGuard } from './guard/edit-permission.guard';
+import { ReadPermissionGuard } from './guard/read-permission.guard';
 
 @Controller('invitation')
 @UseGuards(JwtAuthGuard)
@@ -42,6 +43,7 @@ export class InvitationController {
   }
 
   @Get(':id')
+  @UseGuards(ReadPermissionGuard)
   getInvitationById(@Param('id') id: string) {
     return this.invitationService.getInvitationById(id);
   }

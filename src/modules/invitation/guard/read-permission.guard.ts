@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { Invitation } from '../entities';
 
 @Injectable()
-export class EditPermissionGuard implements CanActivate {
+export class ReadPermissionGuard implements CanActivate {
   constructor(
     @InjectRepository(Invitation)
     private readonly invitationRepository: Repository<Invitation>,
@@ -21,14 +21,15 @@ export class EditPermissionGuard implements CanActivate {
 
     const invitation = await this.invitationRepository.findOne({
       where: { id: request.params.id },
-      relations: ['owner'],
+      relations: ['owner', 'user.user'],
     });
     if (!invitation) throw new NotFoundException('Invitation not found');
 
-    const isEditAccess = invitation.owner.email === request.user.email;
+    const isOwner = invitation.owner.email === request.user.email;
+    const isInvitedUser = invitation.user.user.email === request.user.email;
 
-    if (isEditAccess) return true;
+    if (isOwner || isInvitedUser) return true;
 
-    throw new ForbiddenException('You do not have permission to edit.');
+    throw new ForbiddenException();
   }
 }
