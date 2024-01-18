@@ -1,5 +1,7 @@
 import { User } from '../../../user/entities';
 import { UserActions } from '../../../user/entities/company-actions.entity';
+import { Invitation } from '../../invitation/entities';
+
 import {
   Column,
   CreateDateColumn,
@@ -10,7 +12,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Invitation } from './invitation.entity';
 
 export enum Status {
   PRIVATE = 'private',

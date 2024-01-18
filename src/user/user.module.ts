@@ -10,7 +10,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { Company } from '../modules/company/entities/company.entity';
 import { UserActions } from './entities/company-actions.entity';
-import { Invitation } from '../modules/company/entities';
+import { Invitation } from 'src/modules/invitation/entities/invitation.entity';
 
 @Module({
   imports: [

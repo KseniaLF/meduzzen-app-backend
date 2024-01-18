@@ -10,6 +10,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformResponseInterceptor } from './common/interceptor/response.interceptor';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { CompanyModule } from './modules/company/company.module';
+import { InvitationModule } from './modules/invitation/invitation.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CompanyModule } from './modules/company/company.module';
 
     UserModule,
     CompanyModule,
+    InvitationModule,
   ],
   controllers: [AppController],
   providers: [
