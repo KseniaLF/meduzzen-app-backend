@@ -63,29 +63,18 @@ export class InvitationService {
     companyId: string,
     ownerEmail: string,
   ) {
-    const user = await this.userRepository.findOne({
-      where: { email: invitedUserEmail },
-    });
-
-    const owner = await this.userRepository.findOne({
-      where: { email: ownerEmail },
-    });
-
     let invitedUser = await this.userActionsRepository.findOne({
       relations: ['user', 'invitations', 'invitations.company'],
       where: { user: { email: invitedUserEmail } },
     });
-    console.log(invitedUser);
     if (!invitedUser) {
+      const user = await this.userRepository.findOne({
+        where: { email: invitedUserEmail },
+      });
+      if (!user) throw new NotFoundException();
       invitedUser = await this.userActionsRepository.save({ user });
-      console.log(invitedUser);
     }
 
-    if (!invitedUser) {
-      throw new NotFoundException(`User with email ${invitedUser} not found`);
-    }
-
-    //TODO : check it good enough
     const company = await this.companyRepository.findOne({
       where: { id: companyId },
     });
@@ -98,6 +87,11 @@ export class InvitationService {
     );
 
     if (!isCompanyAlreadyInvited) {
+      const owner = await this.userRepository.findOne({
+        where: { email: ownerEmail },
+      });
+      if (!owner) throw new NotFoundException();
+
       const data = await this.invitationRepository.save({
         user: invitedUser,
         company,
@@ -105,24 +99,17 @@ export class InvitationService {
       });
 
       return {
-        message: `The company with identifier ${companyId} successfully invited the user ${invitedUserEmail}`,
+        message: `Company ${company.name} successfully invited the user ${invitedUserEmail}.`,
         data,
       };
     }
 
     return {
-      message: `Company with ID ${companyId} is already invited to the user.`,
+      message: `Company ${company.name} is already invited to the user ${invitedUserEmail}.`,
     };
   }
 
-  // ⚠️❌ there's no check to see if there's access to invitation
   async deleteInvitation(invitationId: string) {
-    const invitationForMeById = await this.invitationRepository.findOne({
-      where: { id: invitationId },
-    });
-    if (!invitationForMeById)
-      throw new NotFoundException('Invitation not found');
-
     await this.invitationRepository.delete(invitationId);
     return { message: 'Invitation successfully delete' };
   }
