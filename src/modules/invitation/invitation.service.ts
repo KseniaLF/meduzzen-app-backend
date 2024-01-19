@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -7,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from '../company/entities';
 import { Repository } from 'typeorm';
 import { User, UserActions } from 'src/user/entities';
-import { Invitation } from './entities';
+import { Invitation, InvitationStatus } from './entities';
 import { SendInvitationParams } from './dto/create-invitation.dto';
 
 @Injectable()
@@ -137,13 +138,11 @@ export class InvitationService {
     return data;
   }
 
-  async acceptInvitation(invitationId: string, email: string) {
+  async acceptInvitation(invitationId: string) {
     const invitation = await this.invitationRepository.findOne({
-      relations: ['user.user', 'company'],
-      where: { id: invitationId, user: { user: { email } } },
+      relations: ['user', 'company'],
+      where: { id: invitationId },
     });
-    if (!invitation) throw new NotFoundException('Invitation not found');
-    console.log(invitation);
 
     const currentCompany = await this.companyRepository.findOne({
       relations: ['participants'],
@@ -151,21 +150,24 @@ export class InvitationService {
     });
     if (!currentCompany) throw new NotFoundException();
 
-    console.log(currentCompany);
-
-    console.log(3);
-
-    // Обновляем список участников
     currentCompany.participants = [
       ...currentCompany.participants,
       invitation.user,
     ];
-    console.log(2);
-    // Сохраняем изменения в базе данных
     await this.companyRepository.save(currentCompany);
 
-    console.log('Значение обновлено успешно');
+    await this.invitationRepository.update(invitationId, {
+      status: InvitationStatus.ACCEPTED,
+    });
 
-    return currentCompany;
+    return { currentCompany };
+  }
+
+  async rejectInvitation(invitationId: string) {
+    await this.invitationRepository.update(invitationId, {
+      status: InvitationStatus.REJECTED,
+    });
+
+    return { message: 'Success rejected' };
   }
 }

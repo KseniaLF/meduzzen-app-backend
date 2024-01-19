@@ -15,6 +15,7 @@ import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
 import { EditPermissionGuard } from './guard/edit-permission.guard';
 import { ReadPermissionGuard } from './guard/read-permission.guard';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
+import { InvitationValidationGuard } from './guard/invitation-validation.guard';
 
 @Controller('invitation')
 @UseGuards(JwtAuthGuard)
@@ -51,8 +52,15 @@ export class InvitationController {
 
   // ---------- USER ----------------
   @Post('/accept-invite/:inviteId')
-  acceptInvitation(@Param('inviteId') inviteId: string, @Request() req) {
-    return this.invitationService.acceptInvitation(inviteId, req.user.email);
+  @UseGuards(InvitationValidationGuard)
+  acceptInvitation(@Param('inviteId') inviteId: string) {
+    return this.invitationService.acceptInvitation(inviteId);
+  }
+
+  @Post('/reject-invite/:inviteId')
+  @UseGuards(InvitationValidationGuard)
+  rejectInvitation(@Param('inviteId') inviteId: string) {
+    return this.invitationService.rejectInvitation(inviteId);
   }
 
   @Get('user-activity')
