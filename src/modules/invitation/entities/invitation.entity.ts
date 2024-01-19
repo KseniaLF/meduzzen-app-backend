@@ -2,6 +2,12 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User, UserActions } from '../../../user/entities';
 import { Company } from '../../company/entities';
 
+enum Status {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  REJECTED = 'rejected',
+}
+
 @Entity()
 export class Invitation {
   @PrimaryGeneratedColumn('uuid')
@@ -9,6 +15,9 @@ export class Invitation {
 
   @Column({ default: 'Content' })
   message: string;
+
+  @Column({ default: Status.PENDING })
+  status: Status;
 
   @ManyToOne(() => UserActions, (user) => user.invitations)
   user: UserActions;

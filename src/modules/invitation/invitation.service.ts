@@ -121,4 +121,51 @@ export class InvitationService {
     await this.invitationRepository.delete(invitationId);
     return { message: 'Invitation successfully delete' };
   }
+
+  // ---------- USERS ----------------
+
+  async getUsersActivity() {
+    const data = await this.userActionsRepository.find({
+      relations: [
+        'user',
+        'companyParticipations',
+        'companyInvitations',
+        'invitations',
+        'companyRequests',
+      ],
+    });
+    return data;
+  }
+
+  async acceptInvitation(invitationId: string, email: string) {
+    const invitation = await this.invitationRepository.findOne({
+      relations: ['user.user', 'company'],
+      where: { id: invitationId, user: { user: { email } } },
+    });
+    if (!invitation) throw new NotFoundException('Invitation not found');
+    console.log(invitation);
+
+    const currentCompany = await this.companyRepository.findOne({
+      relations: ['participants'],
+      where: { id: invitation.company.id },
+    });
+    if (!currentCompany) throw new NotFoundException();
+
+    console.log(currentCompany);
+
+    console.log(3);
+
+    // Обновляем список участников
+    currentCompany.participants = [
+      ...currentCompany.participants,
+      invitation.user,
+    ];
+    console.log(2);
+    // Сохраняем изменения в базе данных
+    await this.companyRepository.save(currentCompany);
+
+    console.log('Значение обновлено успешно');
+
+    return currentCompany;
+  }
 }

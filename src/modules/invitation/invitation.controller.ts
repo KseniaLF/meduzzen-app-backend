@@ -49,6 +49,18 @@ export class InvitationController {
     });
   }
 
+  // ---------- USER ----------------
+  @Post('/accept-invite/:inviteId')
+  acceptInvitation(@Param('inviteId') inviteId: string, @Request() req) {
+    return this.invitationService.acceptInvitation(inviteId, req.user.email);
+  }
+
+  @Get('user-activity')
+  getUsersActivity() {
+    return this.invitationService.getUsersActivity();
+  }
+
+  // -------------------------
   @Get(':id')
   @UseGuards(ReadPermissionGuard)
   getInvitationById(@Param('id') id: string) {
