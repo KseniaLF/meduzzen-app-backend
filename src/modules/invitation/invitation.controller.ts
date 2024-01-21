@@ -63,11 +63,6 @@ export class InvitationController {
     return this.invitationService.rejectInvitation(inviteId);
   }
 
-  @Get('user-activity')
-  getUsersActivity() {
-    return this.invitationService.getUsersActivity();
-  }
-
   // -------------------------
   @Get(':id')
   @UseGuards(ReadPermissionGuard)

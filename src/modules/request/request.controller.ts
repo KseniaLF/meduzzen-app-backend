@@ -6,19 +6,38 @@ import {
   Patch,
   Param,
   Delete,
+  UsePipes,
+  Request,
+  ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { RequestService } from './request.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
+import { JwtAuthGuard } from '../user/guards/jwt-auth.guard';
 
 @Controller('request')
+@UseGuards(JwtAuthGuard)
 export class RequestController {
   constructor(private readonly requestService: RequestService) {}
 
-  @Post()
-  create(@Body() createRequestDto: CreateRequestDto) {
-    return this.requestService.create(createRequestDto);
+  @Post('send')
+  @UsePipes(new ValidationPipe())
+  async sendInvitation(
+    @Body() sendRequestDto: CreateRequestDto,
+    @Request() req,
+  ) {
+    return await this.requestService.sendRequest({
+      ...sendRequestDto,
+      userEmail: req.user.email,
+    });
   }
+
+  // @Get()
+  // findAldl(@Request() req) {
+  //   console.log(req.user);
+  //   return this.requestService.gggg();
+  // }
 
   @Get()
   findAll() {

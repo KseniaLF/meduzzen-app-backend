@@ -83,12 +83,11 @@ export class InvitationService {
       where: { id: companyId },
       relations: ['owner'],
     });
-    if (company.owner.email !== ownerEmail)
-      throw new ForbiddenException('No access');
-
     if (!company) {
       throw new NotFoundException(`Company with ID ${companyId} not found`);
     }
+    if (company.owner.email !== ownerEmail)
+      throw new ForbiddenException('No access');
 
     const isCompanyAlreadyInvited = invitedUser?.invitations?.some(
       (invitation) => invitation.company.id === company.id,
@@ -124,19 +123,6 @@ export class InvitationService {
   }
 
   // ---------- USERS ----------------
-
-  async getUsersActivity() {
-    const data = await this.userActionsRepository.find({
-      relations: [
-        'user',
-        'companyParticipations',
-        'companyInvitations',
-        'invitations',
-        'companyRequests',
-      ],
-    });
-    return data;
-  }
 
   async acceptInvitation(invitationId: string) {
     const invitation = await this.invitationRepository.findOne({
