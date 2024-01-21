@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from '../company/entities';
 import { Repository } from 'typeorm';
-import { User } from 'src/user/entities';
+import { User } from 'src/modules/user/entities';
 import { Invitation, InvitationStatus } from './entities';
 import { SendInvitationParams } from './dto/create-invitation.dto';
 import { UserActions } from '../actions/entities';

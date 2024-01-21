@@ -11,7 +11,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { InvitationService } from './invitation.service';
-import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/modules/user/guards/jwt-auth.guard';
 import { EditPermissionGuard } from './guard/edit-permission.guard';
 import { ReadPermissionGuard } from './guard/read-permission.guard';
 import { CreateInvitationDto } from './dto/create-invitation.dto';

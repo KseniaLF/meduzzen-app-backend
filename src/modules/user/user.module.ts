@@ -8,9 +8,9 @@ import { PaginationService } from 'src/common/service/pagination.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { Company } from '../modules/company/entities/company.entity';
-import { Invitation } from '../modules/invitation/entities';
-import { UserRequest } from '../modules/request/entities';
+import { Company } from '../company/entities/company.entity';
+import { Invitation } from '../invitation/entities';
+import { UserRequest } from '../request/entities';
 import { UserActions } from 'src/modules/actions/entities';
 
 @Module({

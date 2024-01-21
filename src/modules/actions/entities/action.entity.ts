@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Invitation } from '../../invitation/entities';
 import { Company } from '../../company/entities';
-import { User } from '../../../user/entities';
+import { User } from '../../user/entities';
 import { UserRequest } from '../../request/entities';
 
 @Entity()

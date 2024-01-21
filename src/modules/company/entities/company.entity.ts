@@ -1,4 +1,4 @@
-import { User } from '../../../user/entities';
+import { User } from '../../user/entities';
 import { Invitation } from '../../invitation/entities';
 import { UserActions } from '../../actions/entities';
 
