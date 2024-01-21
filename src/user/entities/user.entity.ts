@@ -9,8 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Auth } from './auth.entity';
-import { UserActions } from './company-actions.entity';
 import { Company } from '../../modules/company/entities';
+import { UserActions } from '../../modules/actions/entities';
 
 @Entity()
 export class User {

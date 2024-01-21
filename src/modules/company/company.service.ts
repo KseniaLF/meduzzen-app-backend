@@ -8,8 +8,8 @@ import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { PaginationService } from 'src/common/service/pagination.service';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 import { User } from '../../user/entities/user.entity';
-import { UserActions } from 'src/user/entities/company-actions.entity';
 import { Invitation } from '../invitation/entities';
+import { UserActions } from '../actions/entities';
 
 @Injectable()
 export class CompanyService {

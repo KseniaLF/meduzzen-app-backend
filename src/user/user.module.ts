@@ -9,9 +9,9 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { Company } from '../modules/company/entities/company.entity';
-import { UserActions } from './entities/company-actions.entity';
 import { Invitation } from '../modules/invitation/entities';
 import { UserRequest } from '../modules/request/entities';
+import { UserActions } from 'src/modules/actions/entities';
 
 @Module({
   imports: [

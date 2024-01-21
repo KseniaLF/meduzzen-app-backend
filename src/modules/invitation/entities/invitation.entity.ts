@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User, UserActions } from '../../../user/entities';
+import { User } from '../../../user/entities';
 import { Company } from '../../company/entities';
+import { UserActions } from '../../actions/entities';
 
 export enum InvitationStatus {
   PENDING = 'pending',

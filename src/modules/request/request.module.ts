@@ -3,7 +3,7 @@ import { RequestService } from './request.service';
 import { RequestController } from './request.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from '../company/entities';
-import { UserActions } from 'src/user/entities';
+import { UserActions } from '../actions/entities';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Company, UserActions])],

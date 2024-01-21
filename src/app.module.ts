@@ -12,6 +12,7 @@ import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { CompanyModule } from './modules/company/company.module';
 import { InvitationModule } from './modules/invitation/invitation.module';
 import { RequestModule } from './modules/request/request.module';
+import { ActionsModule } from './modules/actions/actions.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RequestModule } from './modules/request/request.module';
     CompanyModule,
     InvitationModule,
     RequestModule,
+    ActionsModule,
   ],
   controllers: [AppController],
   providers: [

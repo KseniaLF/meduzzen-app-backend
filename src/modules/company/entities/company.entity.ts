@@ -1,6 +1,6 @@
 import { User } from '../../../user/entities';
-import { UserActions } from '../../../user/entities/company-actions.entity';
 import { Invitation } from '../../invitation/entities';
+import { UserActions } from '../../actions/entities';
 
 import {
   Column,
