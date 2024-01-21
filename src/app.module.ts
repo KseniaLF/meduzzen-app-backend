@@ -4,12 +4,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
+import { UserModule } from './modules/user/user.module';
 import { AppLoggerMiddleware } from './common/middleware/logger.middleware';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformResponseInterceptor } from './common/interceptor/response.interceptor';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { CompanyModule } from './modules/company/company.module';
+import { InvitationModule } from './modules/invitation/invitation.module';
+import { RequestModule } from './modules/request/request.module';
+import { ActionsModule } from './modules/actions/actions.module';
 
 @Module({
   imports: [
@@ -23,6 +26,9 @@ import { CompanyModule } from './modules/company/company.module';
 
     UserModule,
     CompanyModule,
+    InvitationModule,
+    RequestModule,
+    ActionsModule,
   ],
   controllers: [AppController],
   providers: [

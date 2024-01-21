@@ -49,12 +49,15 @@ export class UserService {
   async signIn(signInDto: SignInDto): Promise<any> {
     const { email, password } = signInDto;
     const user = await this.userRepository.findOneBy({ email });
-    const auth = await this.authRepository.findOneBy({ id: user.id });
+    const auth = await this.authRepository.findOne({
+      relations: ['user'],
+      where: { user: { email } },
+    });
 
     const isPasssMatch = await argon2.verify(auth.passwordHash, password);
     if (!isPasssMatch) throw new UnauthorizedException();
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

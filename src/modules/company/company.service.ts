@@ -4,10 +4,12 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Repository } from 'typeorm';
 import { Company } from './entities';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/entities';
 import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { PaginationService } from 'src/common/service/pagination.service';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
+import { User } from '../user/entities/user.entity';
+import { Invitation } from '../invitation/entities';
+import { UserActions } from '../actions/entities';
 
 @Injectable()
 export class CompanyService {
@@ -18,6 +20,12 @@ export class CompanyService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
 
     private readonly paginationService: PaginationService,
+
+    @InjectRepository(UserActions)
+    private readonly userActionsRepository: Repository<UserActions>,
+
+    @InjectRepository(Invitation)
+    private readonly invitationRepository: Repository<Invitation>,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto, email: string) {
@@ -44,7 +52,16 @@ export class CompanyService {
   }
 
   async findOne(id: string) {
-    const company = await this.companyRepository.findOneBy({ id });
+    const company = await this.companyRepository.findOne({
+      where: { id },
+      relations: [
+        'owner',
+        'participants',
+        'userInvitations',
+        'invitations',
+        'userRequests',
+      ],
+    });
     if (!company) throw new NotFoundException();
     return company;
   }
