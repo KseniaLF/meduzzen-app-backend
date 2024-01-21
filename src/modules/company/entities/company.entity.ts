@@ -45,10 +45,10 @@ export class Company {
   @ManyToMany(() => UserActions, (user) => user.companyParticipations)
   participants: UserActions[];
 
-  // users to whom this company has sent an invitation to join
-  @ManyToMany(() => UserActions, (user) => user.companyInvitations)
-  userInvitations: UserActions[];
+  // @ManyToMany(() => UserActions, (user) => user.companyInvitations)
+  // userInvitations: UserActions[];
 
+  // users to whom this company has sent an invitation to join
   @OneToMany(() => Invitation, (invitation) => invitation.company)
   invitations: Invitation[];
 

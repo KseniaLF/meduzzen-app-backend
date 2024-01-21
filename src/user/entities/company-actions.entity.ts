@@ -11,6 +11,7 @@ import {
 import { Company } from '../../modules/company/entities/company.entity';
 import { User } from './user.entity';
 import { Invitation } from '../../modules/invitation/entities';
+import { UserRequest } from '../../modules/request/entities';
 
 @Entity()
 export class UserActions {
@@ -29,18 +30,18 @@ export class UserActions {
   @JoinTable()
   companyParticipations: Company[];
 
-  // companies that have sent the user an invitations to join
-  @ManyToMany(() => Company, (company) => company.userInvitations)
-  @JoinTable()
-  companyInvitations: Company[];
+  //  TODO: this is not usable, delete it ❌
+  // @ManyToMany(() => Company, (company) => company.userInvitations)
+  // @JoinTable()
+  // companyInvitations: Company[];
 
+  // companies that have sent the user an invitations to join
   @OneToMany(() => Invitation, (invitation) => invitation.user)
   invitations: Invitation[];
 
   // companies to which this user has sent a request to join
-  @ManyToMany(() => Company, (company) => company.userRequests)
-  @JoinTable()
-  companyRequests: Company[];
+  @OneToMany(() => UserRequest, (request) => request.owner)
+  companyRequests: UserRequest[];
 
   @CreateDateColumn()
   createdAt: Date;

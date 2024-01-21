@@ -11,6 +11,7 @@ import { TransformResponseInterceptor } from './common/interceptor/response.inte
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { CompanyModule } from './modules/company/company.module';
 import { InvitationModule } from './modules/invitation/invitation.module';
+import { RequestModule } from './modules/request/request.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { InvitationModule } from './modules/invitation/invitation.module';
     UserModule,
     CompanyModule,
     InvitationModule,
+    RequestModule,
   ],
   controllers: [AppController],
   providers: [
