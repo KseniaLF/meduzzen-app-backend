@@ -16,6 +16,7 @@ import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { JwtAuthGuard } from '../user/guards/jwt-auth.guard';
 import { EditPermissionGuard } from './guard/edit-permission.guard';
+import { RequestValidationGuard } from './guard/request-validation.guard';
 
 @Controller('request')
 @UseGuards(JwtAuthGuard)
@@ -43,6 +44,20 @@ export class RequestController {
   findAll() {
     return this.requestService.findAll();
   }
+
+  // COMPANY OWNER's actions
+  @Get('accept/:id')
+  @UseGuards(RequestValidationGuard)
+  acceptRequest(@Param('id') id: string) {
+    return this.requestService.acceptRequest(id);
+  }
+
+  @Get('reject/:id')
+  @UseGuards(RequestValidationGuard)
+  rejectRequest(@Param('id') id: string) {
+    return this.requestService.rejectRequest(id);
+  }
+  // -----------------------
 
   @Get(':id')
   findOne(@Param('id') id: string) {

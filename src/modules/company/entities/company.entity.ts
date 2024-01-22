@@ -62,3 +62,8 @@ export class Company {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
+//  TODO: userRequests not work so good as invitations.
+// to do routes:
+//  QUIT company.
+// delere patricipant from my company

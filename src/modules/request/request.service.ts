@@ -5,9 +5,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities';
 import { Repository } from 'typeorm';
 import { ActionsService } from '../actions/actions.service';
-import { UserRequest } from './entities';
+import { RequestStatus, UserRequest } from './entities';
 import { CompanyService } from '../company/company.service';
-import { RequestNotFoundException } from 'src/common/filter';
+import {
+  CompanyNotFoundException,
+  RequestNotFoundException,
+} from 'src/common/filter';
+import { Company } from '../company/entities';
 
 @Injectable()
 export class RequestService {
@@ -21,13 +25,14 @@ export class RequestService {
 
     private companyService: CompanyService,
 
-    // @InjectRepository(Company)
-    // private readonly companyRepository: Repository<Company>,
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
 
     @InjectRepository(UserRequest)
     private readonly requestRepository: Repository<UserRequest>,
   ) {}
 
+  // BUT You are already participant this company??? ❌
   async sendRequest({ companyId, userEmail, message }: SendRequestParams) {
     const { userAction } = await this.actionsService.getUserAction(userEmail);
     const company = await this.companyService.findOne(companyId);
@@ -100,5 +105,40 @@ export class RequestService {
       message: updateRequestDto.message,
     });
     return { message: 'Message updated successfully' };
+  }
+
+  // ---
+
+  async acceptRequest(id: string) {
+    const request = await this.requestRepository.findOne({
+      relations: ['owner', 'company'],
+      where: { id },
+    });
+
+    const currentCompany = await this.companyRepository.findOne({
+      relations: ['participants'],
+      where: { id: request.company.id },
+    });
+    if (!currentCompany) throw new CompanyNotFoundException();
+
+    currentCompany.participants = [
+      ...currentCompany.participants,
+      request.owner,
+    ];
+    await this.companyRepository.save(currentCompany);
+
+    await this.requestRepository.update(id, {
+      status: RequestStatus.ACCEPTED,
+    });
+
+    return { currentCompany, message: 'Success accepted' };
+  }
+
+  async rejectRequest(invitationId: string) {
+    await this.requestRepository.update(invitationId, {
+      status: RequestStatus.REJECTED,
+    });
+
+    return { message: 'Success rejected' };
   }
 }
