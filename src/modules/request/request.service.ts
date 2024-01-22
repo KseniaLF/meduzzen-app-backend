@@ -61,25 +61,30 @@ export class RequestService {
     };
   }
 
+  // if already accepted, owner cant delete the request? or no?
+  // now owner can delete the request
   async removeRequest(requestId: string) {
     await this.requestRepository.delete(requestId);
     return { message: 'Request successfully delete' };
   }
 
+  async findAllMy(email: string) {
+    const data = await this.requestRepository.find({
+      where: { owner: { email } },
+      relations: ['owner', 'company'],
+    });
+    return { data, message: `All my requests` };
+  }
+
+  // FOR TESTING ONLY
   async findAll() {
     const data = await this.requestRepository.find({
       relations: ['owner', 'company'],
     });
-    return { data, message: `All request data` };
+    return { data, message: `All requests` };
   }
 
-  async findAllMy() {
-    const data = await this.requestRepository.find({
-      relations: ['owner', 'company'],
-    });
-    return { data, message: `All request data` };
-  }
-
+  // Need Read-Permission Guard
   async findOne(id: string) {
     const data = await this.requestRepository.findOne({
       where: { id },
@@ -89,7 +94,15 @@ export class RequestService {
     return { data, message: `Request data` };
   }
 
-  async update(id: string, updateRequestDto: UpdateRequestDto) {
-    return `This action updates a #${id} request`;
+  async updateMessage(id: string, updateRequestDto: UpdateRequestDto) {
+    const request = await this.requestRepository.findOne({
+      where: { id },
+    });
+    if (!request) throw new NotFoundException();
+
+    await this.requestRepository.update(id, {
+      message: updateRequestDto.message,
+    });
+    return { message: 'Message updated successfully' };
   }
 }

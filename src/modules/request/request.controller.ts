@@ -35,6 +35,11 @@ export class RequestController {
   }
 
   @Get()
+  findMy(@Request() req) {
+    return this.requestService.findAllMy(req.user.email);
+  }
+
+  @Get('all')
   findAll() {
     return this.requestService.findAll();
   }
@@ -45,8 +50,9 @@ export class RequestController {
   }
 
   @Patch(':id')
+  @UseGuards(EditPermissionGuard)
   update(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto) {
-    return this.requestService.update(id, updateRequestDto);
+    return this.requestService.updateMessage(id, updateRequestDto);
   }
 
   @Delete(':id')

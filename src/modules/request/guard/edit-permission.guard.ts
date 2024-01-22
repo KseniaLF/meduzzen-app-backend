@@ -23,7 +23,6 @@ export class EditPermissionGuard implements CanActivate {
       where: { id: request.params.id },
       relations: ['owner.user'],
     });
-    console.log(userRequest);
 
     if (!userRequest) throw new NotFoundException('Invitation not found');
 
