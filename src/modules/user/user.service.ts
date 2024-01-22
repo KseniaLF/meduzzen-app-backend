@@ -1,7 +1,6 @@
 import { SignInDto } from './dto/sign-in.dto';
 import {
   Injectable,
-  NotFoundException,
   ConflictException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -16,6 +15,7 @@ import { User } from './entities/user.entity';
 import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { PaginationService } from 'src/common/service/pagination.service';
 import { JwtService } from '@nestjs/jwt';
+import { UserNotFoundException } from 'src/common/filter';
 
 @Injectable()
 export class UserService {
@@ -74,19 +74,19 @@ export class UserService {
 
   async findOne(id: string): Promise<User> {
     const existUser = await this.userRepository.findOneBy({ id });
-    if (!existUser) throw new NotFoundException('User not found');
+    if (!existUser) throw new UserNotFoundException();
     return existUser;
   }
 
   async findUserByEmail(email: string): Promise<User> {
     const existUser = await this.userRepository.findOneBy({ email });
-    if (!existUser) throw new NotFoundException('User not found');
+    if (!existUser) throw new UserNotFoundException();
     return existUser;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<string> {
     const existUser = await this.findOne(id);
-    if (!existUser) throw new NotFoundException('User not found');
+    if (!existUser) throw new UserNotFoundException();
 
     await this.userRepository.update(id, {
       name: updateUserDto.name,
@@ -97,7 +97,7 @@ export class UserService {
 
   async remove(id: string): Promise<string> {
     const existUser = await this.userRepository.findOneBy({ id });
-    if (!existUser) throw new NotFoundException('User not found');
+    if (!existUser) throw new UserNotFoundException();
 
     await this.userRepository.delete(id);
     return 'User deleted successfully';

@@ -11,6 +11,7 @@ import { Invitation, InvitationStatus } from './entities';
 import { SendInvitationParams } from './dto/create-invitation.dto';
 import { UserActions } from '../actions/entities';
 import { ActionsService } from '../actions/actions.service';
+import { CompanyNotFoundException } from 'src/common/filter';
 
 @Injectable()
 export class InvitationService {
@@ -77,7 +78,7 @@ export class InvitationService {
       relations: ['owner'],
     });
     if (!company) {
-      throw new NotFoundException(`Company with ID ${companyId} not found`);
+      throw new CompanyNotFoundException();
     }
     if (company.owner.email !== ownerEmail)
       throw new ForbiddenException('No access');
@@ -127,7 +128,7 @@ export class InvitationService {
       relations: ['participants'],
       where: { id: invitation.company.id },
     });
-    if (!currentCompany) throw new NotFoundException();
+    if (!currentCompany) throw new CompanyNotFoundException();
 
     currentCompany.participants = [
       ...currentCompany.participants,

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Repository } from 'typeorm';
@@ -10,6 +10,7 @@ import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 import { User } from '../user/entities/user.entity';
 import { Invitation } from '../invitation/entities';
 import { UserActions } from '../actions/entities';
+import { CompanyNotFoundException } from 'src/common/filter';
 
 @Injectable()
 export class CompanyService {
@@ -57,8 +58,7 @@ export class CompanyService {
       relations: ['owner', 'participants', 'invitations'],
     });
     // userRequests in relations???
-    if (!company)
-      throw new NotFoundException(`Company with ID ${id} not found`);
+    if (!company) throw new CompanyNotFoundException();
     return company;
   }
 

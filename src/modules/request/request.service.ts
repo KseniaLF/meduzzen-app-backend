@@ -1,18 +1,13 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { SendRequestParams } from './dto/create-request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities';
 import { Repository } from 'typeorm';
-// import { UserActions } from '../actions/entities';
 import { ActionsService } from '../actions/actions.service';
-// import { Company } from '../company/entities';
 import { UserRequest } from './entities';
 import { CompanyService } from '../company/company.service';
+import { RequestNotFoundException } from 'src/common/filter';
 
 @Injectable()
 export class RequestService {
@@ -90,7 +85,8 @@ export class RequestService {
       where: { id },
       relations: ['owner', 'company'],
     });
-    if (!data) throw new NotFoundException();
+
+    if (!data) throw new RequestNotFoundException();
     return { data, message: `Request data` };
   }
 
@@ -98,7 +94,7 @@ export class RequestService {
     const request = await this.requestRepository.findOne({
       where: { id },
     });
-    if (!request) throw new NotFoundException();
+    if (!request) throw new RequestNotFoundException();
 
     await this.requestRepository.update(id, {
       message: updateRequestDto.message,
