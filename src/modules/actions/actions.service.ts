@@ -44,7 +44,7 @@ export class ActionsService {
     if (!user) throw new NotFoundException();
 
     if (!userAction) {
-      userAction = await this.userActionsRepository.save({ user });
+      userAction = await this.userActionsRepository.save({ email, user });
     }
 
     return { userAction, user };
@@ -66,7 +66,8 @@ export class ActionsService {
     return `This action updates a #${id} action`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} action`;
+  async remove(id: string) {
+    await this.userActionsRepository.delete(id);
+    return { message: 'Company deleted successfully' };
   }
 }

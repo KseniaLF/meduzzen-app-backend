@@ -1,4 +1,5 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
   JoinTable,
@@ -20,6 +21,9 @@ export class UserActions {
 
   @OneToOne(() => User, (user) => user.actions, { onDelete: 'CASCADE' })
   user: User;
+
+  @Column({ nullable: true })
+  email: string;
 
   // my companies
   //   @OneToMany(() => Company, (company) => company.owner)

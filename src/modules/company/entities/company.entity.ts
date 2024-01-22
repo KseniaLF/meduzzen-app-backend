@@ -51,7 +51,7 @@ export class Company {
   // users to whom this company has sent an invitation to join
   @OneToMany(() => Invitation, (invitation) => invitation.company)
   invitations: Invitation[];
-
+  // This is not correst... ❌❌❌ 🔻🔺🔼🔽
   // users who have sent a joining request to this company
   @ManyToMany(() => UserActions, (user) => user.companyRequests)
   userRequests: UserActions[];

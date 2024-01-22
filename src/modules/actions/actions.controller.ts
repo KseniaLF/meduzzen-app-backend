@@ -47,6 +47,6 @@ export class ActionsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.actionsService.remove(+id);
+    return this.actionsService.remove(id);
   }
 }
