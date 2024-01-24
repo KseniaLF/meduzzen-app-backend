@@ -66,5 +66,5 @@ export class Company {
 
 //  TODO: userRequests not work so good as invitations. ✅
 //  to do routes:
-//  QUIT company.
+//  QUIT company. ✅
 //  delete patricipant from my company ✅

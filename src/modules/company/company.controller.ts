@@ -52,6 +52,12 @@ export class CompanyController {
     return this.companyService.removeUser(id, email);
   }
 
+  @Delete('/:id/me')
+  @UsePipes(new ValidationPipe())
+  quitCompany(@Param('id') id: string, @Body() email: EmailDto) {
+    return this.companyService.removeUser(id, email);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.companyService.findOne(id);
