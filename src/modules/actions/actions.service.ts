@@ -21,8 +21,8 @@ export class ActionsService {
       relations: [
         'user',
         'companyParticipations',
-        'invitations',
-        'companyRequests',
+        'invitations.company',
+        'companyRequests.company',
       ],
     });
     return data;

@@ -12,10 +12,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserRequest } from '../../request/entities';
 
 export enum Status {
   PRIVATE = 'private',
-  PUBLIC = 'inactive',
+  PUBLIC = 'public',
 }
 
 @Entity()
@@ -52,9 +53,10 @@ export class Company {
   @OneToMany(() => Invitation, (invitation) => invitation.company)
   invitations: Invitation[];
   // This is not correst... ❌❌❌ 🔻🔺🔼🔽
+  // IS this already CORRECT??? 🎃❌
   // users who have sent a joining request to this company
-  @ManyToMany(() => UserActions, (user) => user.companyRequests)
-  userRequests: UserActions[];
+  @OneToMany(() => UserRequest, (request) => request.company)
+  userRequests: UserRequest[];
 
   @CreateDateColumn()
   createdAt: Date;
@@ -63,7 +65,7 @@ export class Company {
   updatedAt: Date;
 }
 
-//  TODO: userRequests not work so good as invitations.
+//  TODO: userRequests not work so good as invitations. ✅?
 // to do routes:
 //  QUIT company.
-// delere patricipant from my company
+// delete patricipant from my company

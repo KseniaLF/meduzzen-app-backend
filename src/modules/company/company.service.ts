@@ -60,10 +60,9 @@ export class CompanyService {
         'participants',
         'invitations',
         'invitations.user',
-        // 'userRequests',
+        'userRequests.owner',
       ],
     });
-    // userRequests in relations???
     if (!company) throw new CompanyNotFoundException();
     return company;
   }
