@@ -52,8 +52,7 @@ export class Company {
   // users to whom this company has sent an invitation to join
   @OneToMany(() => Invitation, (invitation) => invitation.company)
   invitations: Invitation[];
-  // This is not correst... ❌❌❌ 🔻🔺🔼🔽
-  // IS this already CORRECT??? 🎃❌
+
   // users who have sent a joining request to this company
   @OneToMany(() => UserRequest, (request) => request.company)
   userRequests: UserRequest[];
@@ -65,7 +64,7 @@ export class Company {
   updatedAt: Date;
 }
 
-//  TODO: userRequests not work so good as invitations. ✅?
-// to do routes:
+//  TODO: userRequests not work so good as invitations. ✅
+//  to do routes:
 //  QUIT company.
-// delete patricipant from my company
+//  delete patricipant from my company ✅

@@ -20,6 +20,7 @@ import { OwnershipGuard } from 'src/modules/company/guard/ownership.guard';
 import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { Company } from './entities';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
+import { EmailDto } from './dto/delete-user.dto';
 
 @Controller('company')
 @UseGuards(JwtAuthGuard)
@@ -33,10 +34,22 @@ export class CompanyController {
   }
 
   @Get()
+  getMyCompany(@Request() req) {
+    return this.companyService.findMyCompany(req.user.email);
+  }
+
+  @Get('all')
   findAll(
     @Query() query: PaginationOptions,
   ): Promise<PaginationResult<Company>> {
     return this.companyService.findAll(query);
+  }
+
+  @Delete('/:id/user')
+  @UseGuards(OwnershipGuard)
+  @UsePipes(new ValidationPipe())
+  removeUser(@Param('id') id: string, @Body() email: EmailDto) {
+    return this.companyService.removeUser(id, email);
   }
 
   @Get(':id')
