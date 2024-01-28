@@ -12,10 +12,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserRequest } from '../../request/entities';
 
 export enum Status {
   PRIVATE = 'private',
-  PUBLIC = 'inactive',
+  PUBLIC = 'public',
 }
 
 @Entity()
@@ -53,8 +54,8 @@ export class Company {
   invitations: Invitation[];
 
   // users who have sent a joining request to this company
-  @ManyToMany(() => UserActions, (user) => user.companyRequests)
-  userRequests: UserActions[];
+  @OneToMany(() => UserRequest, (request) => request.company)
+  userRequests: UserRequest[];
 
   @CreateDateColumn()
   createdAt: Date;
@@ -62,3 +63,8 @@ export class Company {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
+//  TODO: userRequests not work so good as invitations. ✅
+//  to do routes:
+//  QUIT company. ✅
+//  delete patricipant from my company ✅

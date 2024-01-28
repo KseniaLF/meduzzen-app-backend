@@ -15,3 +15,5 @@ export class CreateInvitationDto {
 export interface SendInvitationParams extends CreateInvitationDto {
   ownerEmail: string;
 }
+
+export const INVITATION_RELATIONS = ['user.user', 'owner', 'company'];

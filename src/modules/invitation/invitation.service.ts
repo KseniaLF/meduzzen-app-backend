@@ -10,6 +10,8 @@ import { User } from 'src/modules/user/entities';
 import { Invitation, InvitationStatus } from './entities';
 import { SendInvitationParams } from './dto/create-invitation.dto';
 import { UserActions } from '../actions/entities';
+import { ActionsService } from '../actions/actions.service';
+import { CompanyNotFoundException } from 'src/common/filter';
 
 @Injectable()
 export class InvitationService {
@@ -24,6 +26,8 @@ export class InvitationService {
 
     @InjectRepository(Invitation)
     private readonly invitationRepository: Repository<Invitation>,
+
+    private actionsService: ActionsService,
   ) {}
 
   async getInvitationsForMe(email: string) {
@@ -66,31 +70,20 @@ export class InvitationService {
     ownerEmail,
     message,
   }: SendInvitationParams) {
-    let invitedUser = await this.userActionsRepository.findOne({
-      relations: ['user', 'invitations', 'invitations.company'],
-      where: { user: { email: invitedUserEmail } },
-    });
-
-    if (!invitedUser) {
-      const user = await this.userRepository.findOne({
-        where: { email: invitedUserEmail },
-      });
-      if (!user) throw new NotFoundException();
-      invitedUser = await this.userActionsRepository.save({ user });
-    }
+    const { userAction } =
+      await this.actionsService.getUserAction(invitedUserEmail);
 
     const company = await this.companyRepository.findOne({
       where: { id: companyId },
       relations: ['owner'],
     });
+    if (!company) {
+      throw new CompanyNotFoundException();
+    }
     if (company.owner.email !== ownerEmail)
       throw new ForbiddenException('No access');
 
-    if (!company) {
-      throw new NotFoundException(`Company with ID ${companyId} not found`);
-    }
-
-    const isCompanyAlreadyInvited = invitedUser?.invitations?.some(
+    const isCompanyAlreadyInvited = userAction?.invitations?.some(
       (invitation) => invitation.company.id === company.id,
     );
 
@@ -101,7 +94,7 @@ export class InvitationService {
       if (!owner) throw new NotFoundException();
 
       const data = await this.invitationRepository.save({
-        user: invitedUser,
+        user: userAction,
         company,
         owner,
         message,
@@ -125,19 +118,6 @@ export class InvitationService {
 
   // ---------- USERS ----------------
 
-  async getUsersActivity() {
-    const data = await this.userActionsRepository.find({
-      relations: [
-        'user',
-        'companyParticipations',
-        'companyInvitations',
-        'invitations',
-        'companyRequests',
-      ],
-    });
-    return data;
-  }
-
   async acceptInvitation(invitationId: string) {
     const invitation = await this.invitationRepository.findOne({
       relations: ['user', 'company'],
@@ -148,7 +128,7 @@ export class InvitationService {
       relations: ['participants'],
       where: { id: invitation.company.id },
     });
-    if (!currentCompany) throw new NotFoundException();
+    if (!currentCompany) throw new CompanyNotFoundException();
 
     currentCompany.participants = [
       ...currentCompany.participants,

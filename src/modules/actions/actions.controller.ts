@@ -1,11 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ActionsService } from './actions.service';
 import { CreateActionDto } from './dto/create-action.dto';
 import { UpdateActionDto } from './dto/update-action.dto';
+import { JwtAuthGuard } from '../user/guards/jwt-auth.guard';
 
 @Controller('actions')
+@UseGuards(JwtAuthGuard)
 export class ActionsController {
   constructor(private readonly actionsService: ActionsService) {}
+
+  @Get('user-activity')
+  getUsersActivity() {
+    return this.actionsService.getUsersActivity();
+  }
+
+  //// - - - - - - - - - - -
 
   @Post()
   create(@Body() createActionDto: CreateActionDto) {
@@ -29,6 +47,6 @@ export class ActionsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.actionsService.remove(+id);
+    return this.actionsService.remove(id);
   }
 }
