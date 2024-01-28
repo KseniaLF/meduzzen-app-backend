@@ -113,4 +113,29 @@ export class CompanyService {
     const updatedCompany = await this.companyRepository.save(company);
     return updatedCompany;
   }
+
+  async findInvitations(id: string) {
+    const data = await this.companyRepository.findOne({
+      where: { id },
+      relations: ['invitations.user.user'],
+    });
+    return data.invitations;
+  }
+
+  async findRequests(id: string) {
+    const data = await this.companyRepository.findOne({
+      where: { id },
+      relations: ['userRequests.owner.user'],
+    });
+    return data.userRequests;
+  }
+
+  async findParticipants(id: string) {
+    const data = await this.companyRepository.findOne({
+      where: { id },
+      relations: ['participants.user'],
+    });
+    if (!data) throw new CompanyNotFoundException();
+    return data.participants;
+  }
 }

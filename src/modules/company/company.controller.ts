@@ -58,6 +58,23 @@ export class CompanyController {
     return this.companyService.removeUser(id, email);
   }
 
+  @Get('/:id/invitations')
+  @UseGuards(OwnershipGuard)
+  getMyCompanyInvitations(@Param('id') id: string) {
+    return this.companyService.findInvitations(id);
+  }
+
+  @Get('/:id/requests')
+  @UseGuards(OwnershipGuard)
+  getMyCompanyRequests(@Param('id') id: string) {
+    return this.companyService.findRequests(id);
+  }
+
+  @Get('/:id/participants')
+  getCompanyParticipants(@Param('id') id: string) {
+    return this.companyService.findParticipants(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.companyService.findOne(id);

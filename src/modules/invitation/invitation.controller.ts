@@ -22,7 +22,8 @@ import { InvitationValidationGuard } from './guard/invitation-validation.guard';
 export class InvitationController {
   constructor(private readonly invitationService: InvitationService) {}
 
-  @Get('forMe')
+  // invitations for me
+  @Get()
   getInvitation(@Request() req) {
     return this.invitationService.getInvitationsForMe(req.user.email);
   }
