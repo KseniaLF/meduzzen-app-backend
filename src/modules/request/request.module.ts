@@ -10,10 +10,13 @@ import { User } from '../user/entities';
 import { UserRequest } from './entities';
 import { PaginationService } from 'src/common/service/pagination.service';
 import { Invitation } from '../invitation/entities';
+import { Participant } from '../participant/entities/participant.entity';
+import { ParticipantService } from '../participant/participant.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Participant,
       Company,
       UserActions,
       User,
@@ -26,6 +29,7 @@ import { Invitation } from '../invitation/entities';
     RequestService,
     ActionsService,
     CompanyService,
+    ParticipantService,
     PaginationService,
   ],
 })

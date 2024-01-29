@@ -1,3 +1,4 @@
+import { Participant } from 'src/modules/participant/entities/participant.entity';
 import { Module } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CompanyController } from './company.controller';
@@ -9,7 +10,15 @@ import { Invitation } from '../invitation/entities';
 import { UserActions } from '../actions/entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Company, User, UserActions, Invitation])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Participant,
+      Company,
+      User,
+      UserActions,
+      Invitation,
+    ]),
+  ],
   controllers: [CompanyController],
   providers: [CompanyService, PaginationService],
 })

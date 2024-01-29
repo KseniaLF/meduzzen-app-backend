@@ -13,9 +13,13 @@ import { CompanyModule } from './modules/company/company.module';
 import { InvitationModule } from './modules/invitation/invitation.module';
 import { RequestModule } from './modules/request/request.module';
 import { ActionsModule } from './modules/actions/actions.module';
+import { ParticipantModule } from './modules/participant/participant.module';
+import { Company } from './modules/company/entities';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Company]),
+
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       ...CONNECTION,
@@ -29,6 +33,7 @@ import { ActionsModule } from './modules/actions/actions.module';
     InvitationModule,
     RequestModule,
     ActionsModule,
+    ParticipantModule,
   ],
   controllers: [AppController],
   providers: [

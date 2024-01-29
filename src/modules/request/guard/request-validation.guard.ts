@@ -2,8 +2,9 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { RequestStatus, UserRequest } from '../entities';
+import { UserRequest } from '../entities';
 import { RequestNotFoundException } from 'src/common/filter';
+import { RequestStatus } from 'src/common/enum';
 
 @Injectable()
 export class RequestValidationGuard implements CanActivate {

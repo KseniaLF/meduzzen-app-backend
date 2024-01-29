@@ -1,33 +1,28 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from '../company/entities';
 import { Repository } from 'typeorm';
-import { User } from 'src/modules/user/entities';
 import { Invitation, InvitationStatus } from './entities';
 import { SendInvitationParams } from './dto/create-invitation.dto';
-import { UserActions } from '../actions/entities';
 import { ActionsService } from '../actions/actions.service';
 import { CompanyNotFoundException } from 'src/common/filter';
+import { ParticipantService } from '../participant/participant.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class InvitationService {
   constructor(
-    @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
-
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
-
-    @InjectRepository(UserActions)
-    private readonly userActionsRepository: Repository<UserActions>,
-
     @InjectRepository(Invitation)
     private readonly invitationRepository: Repository<Invitation>,
 
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
+
+    private userService: UserService,
+
     private actionsService: ActionsService,
+
+    private participantService: ParticipantService,
   ) {}
 
   async getInvitationsForMe(email: string) {
@@ -64,12 +59,10 @@ export class InvitationService {
     return invitation;
   }
 
-  async sendInvitation({
-    invitedUserEmail,
-    companyId,
-    ownerEmail,
-    message,
-  }: SendInvitationParams) {
+  async sendInvitation(sendInvitationParams: SendInvitationParams) {
+    const { invitedUserEmail, companyId, ownerEmail, message } =
+      sendInvitationParams;
+
     const { userAction } =
       await this.actionsService.getUserAction(invitedUserEmail);
 
@@ -77,21 +70,14 @@ export class InvitationService {
       where: { id: companyId },
       relations: ['owner'],
     });
-    if (!company) {
-      throw new CompanyNotFoundException();
-    }
-    if (company.owner.email !== ownerEmail)
-      throw new ForbiddenException('No access');
+    if (!company) throw new CompanyNotFoundException();
 
     const isCompanyAlreadyInvited = userAction?.invitations?.some(
       (invitation) => invitation.company.id === company.id,
     );
 
     if (!isCompanyAlreadyInvited) {
-      const owner = await this.userRepository.findOne({
-        where: { email: ownerEmail },
-      });
-      if (!owner) throw new NotFoundException();
+      const owner = await this.userService.findUserByEmail(ownerEmail);
 
       const data = await this.invitationRepository.save({
         user: userAction,
@@ -124,23 +110,16 @@ export class InvitationService {
       where: { id: invitationId },
     });
 
-    const currentCompany = await this.companyRepository.findOne({
-      relations: ['participants'],
-      where: { id: invitation.company.id },
+    const data = await this.participantService.create({
+      email: invitation.user.email,
+      companyId: invitation.company.id,
     });
-    if (!currentCompany) throw new CompanyNotFoundException();
-
-    currentCompany.participants = [
-      ...currentCompany.participants,
-      invitation.user,
-    ];
-    await this.companyRepository.save(currentCompany);
 
     await this.invitationRepository.update(invitationId, {
       status: InvitationStatus.ACCEPTED,
     });
 
-    return { currentCompany };
+    return { data, message: 'Success accepted' };
   }
 
   async rejectInvitation(invitationId: string) {
