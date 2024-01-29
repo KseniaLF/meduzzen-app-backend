@@ -21,6 +21,8 @@ import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { Company } from './entities';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 import { EmailDto } from './dto/delete-user.dto';
+import { Roles } from 'src/common/decorator';
+import { Role } from 'src/common/enum';
 
 @Controller('company')
 @UseGuards(JwtAuthGuard)
@@ -101,5 +103,11 @@ export class CompanyController {
   @UseGuards(OwnershipGuard)
   remove(@Param('id') id: string) {
     return this.companyService.remove(id);
+  }
+
+  @Get(':id/admin')
+  @Roles(Role.Admin)
+  getAdmins(@Param('id') id: string) {
+    return 'hi ' + id;
   }
 }

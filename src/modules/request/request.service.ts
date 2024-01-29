@@ -2,31 +2,21 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { SendRequestParams } from './dto/create-request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../user/entities';
 import { Repository } from 'typeorm';
 import { ActionsService } from '../actions/actions.service';
 import { RequestStatus, UserRequest } from './entities';
 import { CompanyService } from '../company/company.service';
-import {
-  CompanyNotFoundException,
-  RequestNotFoundException,
-} from 'src/common/filter';
-import { Company } from '../company/entities';
+import { RequestNotFoundException } from 'src/common/filter';
+import { ParticipantService } from '../participant/participant.service';
 
 @Injectable()
 export class RequestService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
-
-    // @InjectRepository(UserActions)
-    // private readonly userActionsRepository: Repository<UserActions>,
-
     private actionsService: ActionsService,
 
     private companyService: CompanyService,
 
-    @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
+    private participantService: ParticipantService,
 
     @InjectRepository(UserRequest)
     private readonly requestRepository: Repository<UserRequest>,
@@ -107,31 +97,22 @@ export class RequestService {
     return { message: 'Message updated successfully' };
   }
 
-  // ---
-
   async acceptRequest(id: string) {
     const request = await this.requestRepository.findOne({
       relations: ['owner', 'company'],
       where: { id },
     });
 
-    const currentCompany = await this.companyRepository.findOne({
-      relations: ['participants'],
-      where: { id: request.company.id },
+    const data = await this.participantService.create({
+      email: request.owner.email,
+      companyId: request.company.id,
     });
-    if (!currentCompany) throw new CompanyNotFoundException();
-
-    currentCompany.participants = [
-      ...currentCompany.participants,
-      request.owner,
-    ];
-    await this.companyRepository.save(currentCompany);
 
     await this.requestRepository.update(id, {
       status: RequestStatus.ACCEPTED,
     });
 
-    return { currentCompany, message: 'Success accepted' };
+    return { data, message: 'Success accepted' };
   }
 
   async rejectRequest(invitationId: string) {

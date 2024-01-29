@@ -12,6 +12,8 @@ import { SendInvitationParams } from './dto/create-invitation.dto';
 import { UserActions } from '../actions/entities';
 import { ActionsService } from '../actions/actions.service';
 import { CompanyNotFoundException } from 'src/common/filter';
+import { Participant } from '../participant/entities/participant.entity';
+import { ParticipantService } from '../participant/participant.service';
 
 @Injectable()
 export class InvitationService {
@@ -27,7 +29,12 @@ export class InvitationService {
     @InjectRepository(Invitation)
     private readonly invitationRepository: Repository<Invitation>,
 
+    @InjectRepository(Participant)
+    private readonly participantRepository: Repository<Participant>,
+
     private actionsService: ActionsService,
+
+    private participantService: ParticipantService,
   ) {}
 
   async getInvitationsForMe(email: string) {
@@ -124,23 +131,16 @@ export class InvitationService {
       where: { id: invitationId },
     });
 
-    const currentCompany = await this.companyRepository.findOne({
-      relations: ['participants'],
-      where: { id: invitation.company.id },
+    const data = await this.participantService.create({
+      email: invitation.user.email,
+      companyId: invitation.company.id,
     });
-    if (!currentCompany) throw new CompanyNotFoundException();
-
-    currentCompany.participants = [
-      ...currentCompany.participants,
-      invitation.user,
-    ];
-    await this.companyRepository.save(currentCompany);
 
     await this.invitationRepository.update(invitationId, {
       status: InvitationStatus.ACCEPTED,
     });
 
-    return { currentCompany };
+    return { data, message: 'Success accepted' };
   }
 
   async rejectInvitation(invitationId: string) {

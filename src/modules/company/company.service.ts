@@ -103,11 +103,11 @@ export class CompanyService {
   async removeUser(id: string, { email }: EmailDto) {
     const company = await this.companyRepository.findOne({
       where: { id },
-      relations: ['participants'],
+      relations: ['participants', 'user'],
     });
 
     company.participants = company.participants.filter(
-      (participant) => participant.email !== email,
+      (participant) => participant.user.email !== email,
     );
 
     const updatedCompany = await this.companyRepository.save(company);

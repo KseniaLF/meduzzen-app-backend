@@ -13,6 +13,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRequest } from '../../request/entities';
+import { Participant } from '../../participant/entities/participant.entity';
 
 export enum Status {
   PRIVATE = 'private',
@@ -43,11 +44,8 @@ export class Company {
   owner: User;
 
   // whose users are accepted into the company
-  @ManyToMany(() => UserActions, (user) => user.companyParticipations)
-  participants: UserActions[];
-
-  // @ManyToMany(() => UserActions, (user) => user.companyInvitations)
-  // userInvitations: UserActions[];
+  @OneToMany(() => Participant, (participant) => participant.company)
+  participants: Participant[];
 
   // users to whom this company has sent an invitation to join
   @OneToMany(() => Invitation, (invitation) => invitation.company)

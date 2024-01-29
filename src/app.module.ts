@@ -6,13 +6,15 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { AppLoggerMiddleware } from './common/middleware/logger.middleware';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformResponseInterceptor } from './common/interceptor/response.interceptor';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { CompanyModule } from './modules/company/company.module';
 import { InvitationModule } from './modules/invitation/invitation.module';
 import { RequestModule } from './modules/request/request.module';
 import { ActionsModule } from './modules/actions/actions.module';
+import { RolesGuard } from './common/guard/roles.guard';
+import { ParticipantModule } from './modules/participant/participant.module';
 
 @Module({
   imports: [
@@ -29,6 +31,7 @@ import { ActionsModule } from './modules/actions/actions.module';
     InvitationModule,
     RequestModule,
     ActionsModule,
+    ParticipantModule,
   ],
   controllers: [AppController],
   providers: [
@@ -41,6 +44,10 @@ import { ActionsModule } from './modules/actions/actions.module';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })
