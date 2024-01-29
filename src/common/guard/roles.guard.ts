@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { Company } from 'src/modules/company/entities';
 import { CompanyNotFoundException } from '../filter';
 
+// only lets in company administrators and the owner
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
@@ -27,7 +28,7 @@ export class RolesGuard implements CanActivate {
     const { user, params } = context.switchToHttp().getRequest();
 
     const company = await this.companyRepository.findOne({
-      where: { id: params.id },
+      where: { id: params.id }, // id - company id
       relations: ['owner', 'participants.user'],
     });
     if (!company) throw new CompanyNotFoundException();
