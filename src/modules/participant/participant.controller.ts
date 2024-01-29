@@ -24,9 +24,9 @@ export class ParticipantController {
     return this.participantService.create(createParticipantDto);
   }
 
-  @Get()
-  findAll() {
-    return this.participantService.findAll();
+  @Get(':companyId')
+  findAll(@Param('id') companyId: string) {
+    return this.participantService.findAll(companyId);
   }
 
   // need ownerthip guard and check if participant is exist

@@ -43,11 +43,13 @@ export class ParticipantService {
     return participant;
   }
 
-  async findAll() {
+  async findAll(companyId: string) {
     const data = await this.participantRepository.find({
       relations: ['company', 'user'],
+      where: { company: { id: companyId } },
     });
-    return data;
+    if (!data) throw new NotFoundException();
+    return { data };
   }
 
   async findOne(id: string) {

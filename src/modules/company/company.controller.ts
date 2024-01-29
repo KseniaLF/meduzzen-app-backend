@@ -21,8 +21,8 @@ import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { Company } from './entities';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 import { EmailDto } from './dto/delete-user.dto';
-import { Roles } from 'src/common/decorator';
-import { Role } from 'src/common/enum';
+// import { Roles } from 'src/common/decorator';
+// import { Role } from 'src/common/enum';
 import { RolesGuard } from 'src/common/guard/roles.guard';
 
 @Controller('company')
@@ -106,9 +106,9 @@ export class CompanyController {
     return this.companyService.remove(id);
   }
 
-  @Get(':id/admin')
-  @Roles(Role.Admin)
+  @Get(':id/admins')
+  // @Roles(Role.Admin)
   getAdmins(@Param('id') id: string) {
-    return 'hi ' + id;
+    return this.companyService.getAdmins(id);
   }
 }
