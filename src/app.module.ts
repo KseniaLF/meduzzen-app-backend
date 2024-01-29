@@ -15,9 +15,13 @@ import { RequestModule } from './modules/request/request.module';
 import { ActionsModule } from './modules/actions/actions.module';
 import { RolesGuard } from './common/guard/roles.guard';
 import { ParticipantModule } from './modules/participant/participant.module';
+import { Company } from './modules/company/entities';
+import { JwtAuthGuard } from './modules/user/guards/jwt-auth.guard';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Company]),
+
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       ...CONNECTION,
@@ -45,10 +49,14 @@ import { ParticipantModule } from './modules/participant/participant.module';
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
   ],
 })
 export class AppModule implements NestModule {

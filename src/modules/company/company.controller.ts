@@ -23,9 +23,10 @@ import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 import { EmailDto } from './dto/delete-user.dto';
 import { Roles } from 'src/common/decorator';
 import { Role } from 'src/common/enum';
+import { RolesGuard } from 'src/common/guard/roles.guard';
 
 @Controller('company')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
