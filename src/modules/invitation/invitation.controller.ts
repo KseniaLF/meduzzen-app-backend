@@ -39,26 +39,29 @@ export class InvitationController {
   }
 
   // I CAN invite myself ❌❗
-  @Post('send')
+  @Post(':id/send')
   @UsePipes(new ValidationPipe())
+  @UseGuards(EditPermissionGuard)
   async sendInvitation(
     @Body() sendInviteDto: CreateInvitationDto,
+    @Param('id') id: string,
     @Request() req,
   ) {
     return await this.invitationService.sendInvitation({
       ...sendInviteDto,
+      companyId: id,
       ownerEmail: req.user.email,
     });
   }
 
   // ---------- USER ----------------
-  @Post('/accept-invite/:inviteId')
+  @Post('/accept/:inviteId')
   @UseGuards(InvitationValidationGuard)
   acceptInvitation(@Param('inviteId') inviteId: string) {
     return this.invitationService.acceptInvitation(inviteId);
   }
 
-  @Post('/reject-invite/:inviteId')
+  @Post('/reject/:inviteId')
   @UseGuards(InvitationValidationGuard)
   rejectInvitation(@Param('inviteId') inviteId: string) {
     return this.invitationService.rejectInvitation(inviteId);
