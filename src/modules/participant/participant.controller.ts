@@ -10,8 +10,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ParticipantService } from './participant.service';
-import { CreateParticipantDto } from './dto/create-participant.dto';
 import { JwtAuthGuard } from '../user/guards/jwt-auth.guard';
+import { OwnershipGuard } from './guard';
+import { CreateParticipantDto } from './dto';
 import { UpdateRoleDto } from '../company/dto/update-role.dto';
 
 @Controller('participant')
@@ -29,8 +30,8 @@ export class ParticipantController {
     return this.participantService.findAll(companyId);
   }
 
-  // need ownerthip guard and check if participant is exist
   @Patch(':id/role')
+  @UseGuards(OwnershipGuard)
   @UsePipes(new ValidationPipe())
   updateRole(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.participantService.updateRole({ id, ...updateRoleDto });
