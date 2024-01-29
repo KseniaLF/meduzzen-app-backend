@@ -4,10 +4,11 @@ import { SendRequestParams } from './dto/create-request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ActionsService } from '../actions/actions.service';
-import { RequestStatus, UserRequest } from './entities';
+import { UserRequest } from './entities';
 import { CompanyService } from '../company/company.service';
 import { RequestNotFoundException } from 'src/common/filter';
 import { ParticipantService } from '../participant/participant.service';
+import { RequestStatus } from 'src/common/enum';
 
 @Injectable()
 export class RequestService {
