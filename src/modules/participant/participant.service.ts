@@ -43,8 +43,11 @@ export class ParticipantService {
     return participant;
   }
 
-  findAll() {
-    return `This action returns all participant`;
+  async findAll() {
+    const data = await this.participantRepository.find({
+      relations: ['company', 'user'],
+    });
+    return data;
   }
 
   findOne(id: number) {

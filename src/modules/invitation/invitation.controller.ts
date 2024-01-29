@@ -41,7 +41,8 @@ export class InvitationController {
   // I CAN invite myself ❌❗
   @Post(':id/send')
   @UsePipes(new ValidationPipe())
-  @UseGuards(EditPermissionGuard)
+  // need ownership guard ❌❗
+  // @UseGuards(EditPermissionGuard)
   async sendInvitation(
     @Body() sendInviteDto: CreateInvitationDto,
     @Param('id') id: string,

@@ -52,8 +52,7 @@ export class RequestService {
     };
   }
 
-  // if already accepted, owner cant delete the request? or no?
-  // now owner can delete the request
+  // if already accepted, owner can delete the request
   async removeRequest(requestId: string) {
     await this.requestRepository.delete(requestId);
     return { message: 'Request successfully delete' };
