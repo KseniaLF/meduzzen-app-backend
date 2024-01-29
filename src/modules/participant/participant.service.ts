@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateParticipantDto } from './dto/create-participant.dto';
-import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Participant } from './entities/participant.entity';
 import { Repository } from 'typeorm';
@@ -10,6 +9,7 @@ import {
   UserNotFoundException,
 } from 'src/common/filter';
 import { Company } from '../company/entities';
+import { UpdateRoleDataDto } from '../company/dto/update-role.dto';
 
 @Injectable()
 export class ParticipantService {
@@ -50,15 +50,17 @@ export class ParticipantService {
     return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} participant`;
+  async findOne(id: string) {
+    const participant = await this.participantRepository.findOne({
+      where: { id },
+    });
+    if (!participant) throw new NotFoundException();
+    return participant;
   }
 
-  update(id: number, updateParticipantDto: UpdateParticipantDto) {
-    return `This action updates a #${id} participant`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} participant`;
+  async updateRole(updateRole: UpdateRoleDataDto) {
+    const { id, role } = updateRole;
+    await this.participantRepository.update(id, { role });
+    return 'Role updated successfully';
   }
 }

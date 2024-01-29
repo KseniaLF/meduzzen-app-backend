@@ -12,6 +12,7 @@ import { Invitation } from '../invitation/entities';
 import { UserActions } from '../actions/entities';
 import { CompanyNotFoundException } from 'src/common/filter';
 import { EmailDto } from './dto/delete-user.dto';
+import { Participant } from '../participant/entities/participant.entity';
 
 const COMPANY_RELATIONS = [
   'owner',
@@ -36,6 +37,9 @@ export class CompanyService {
 
     @InjectRepository(Invitation)
     private readonly invitationRepository: Repository<Invitation>,
+
+    @InjectRepository(Participant)
+    private readonly participantRepository: Repository<Participant>,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto, email: string) {

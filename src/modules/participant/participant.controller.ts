@@ -5,13 +5,14 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ParticipantService } from './participant.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
-import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { JwtAuthGuard } from '../user/guards/jwt-auth.guard';
+import { UpdateRoleDto } from '../company/dto/update-role.dto';
 
 @Controller('participant')
 @UseGuards(JwtAuthGuard)
@@ -28,21 +29,15 @@ export class ParticipantController {
     return this.participantService.findAll();
   }
 
+  // need ownerthip guard and check if participant is exist
+  @Patch(':id/role')
+  @UsePipes(new ValidationPipe())
+  updateRole(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
+    return this.participantService.updateRole({ id, ...updateRoleDto });
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.participantService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateParticipantDto: UpdateParticipantDto,
-  ) {
-    return this.participantService.update(+id, updateParticipantDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.participantService.remove(+id);
+    return this.participantService.findOne(id);
   }
 }
