@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayMinSize,
   IsArray,
   IsBoolean,
   IsEmail,
@@ -20,6 +21,9 @@ export class CreateQuizzDto {
   description: string;
 
   @IsArray()
+  @ArrayMinSize(2, {
+    message: 'Each quizz must contain at least two questions',
+  })
   @ValidateNested({ each: true })
   @Type(() => QuestionDto)
   questions: QuestionDto[];
@@ -39,6 +43,9 @@ export class QuestionDto {
   question: string;
 
   @IsArray()
+  @ArrayMinSize(2, {
+    message: 'Each question must contain at least two answer options',
+  })
   @ValidateNested({ each: true })
   @Type(() => AnswerDto)
   answers: AnswerDto[];
