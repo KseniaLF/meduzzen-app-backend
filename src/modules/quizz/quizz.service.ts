@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateQuizzDataDto } from './dto/create-quizz.dto';
+import {
+  AnswerDto,
+  CreateQuizzDataDto,
+  QuestionDto,
+} from './dto/create-quizz.dto';
 import { UpdateQuizzDto } from './dto/update-quizz.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from '../user/user.service';
@@ -40,34 +44,8 @@ export class QuizzService {
       frequencyDays: 1,
     });
 
-    const data = [];
-
-    for (const { question: questionText, answers } of questions) {
-      const question = await this.questionRepository.save({
-        question: questionText,
-        quizz,
-      });
-
-      const answerData = await Promise.all(
-        answers.map(async ({ answerText, isCorrect = false }) => {
-          const answer = await this.answerRepository.save({
-            answerText,
-            isCorrect,
-            question,
-          });
-          return answer;
-        }),
-      );
-
-      question.answers = answerData;
-      await this.questionRepository.save(question);
-
-      data.push({ ...question, answers: answerData });
-    }
-
-    quizz.questions = data;
-    const res = await this.quizzRepository.save(quizz);
-    console.log(res);
+    quizz.questions = await this.createQuestions(questions, quizz);
+    await this.quizzRepository.save(quizz);
 
     return { message: 'Quizz successfully created' };
   }
@@ -85,51 +63,85 @@ export class QuizzService {
       relations: ['questions.answers', 'owner', 'company'],
       where: { id },
     });
-    return { data };
+    if (!data) throw new NotFoundException();
+    return data;
   }
 
-  async update(id: string, updateQuizzDto: UpdateQuizzDto) {
-    const { description, questions, name } = updateQuizzDto;
-
-    const quizz = await this.quizzRepository.findOne({
-      where: { id },
-      relations: ['questions.answers'],
+  private async createQuestion(
+    question: string,
+    quizz: Quizz,
+  ): Promise<Question> {
+    const data = await this.questionRepository.save({
+      question,
+      quizz,
     });
+    return data;
+  }
 
+  private async createQuestions(
+    questions: QuestionDto[],
+    quizz: Quizz,
+  ): Promise<Question[]> {
+    const data = [];
+
+    for (const { question: questionText, answers } of questions) {
+      const question = await this.createQuestion(questionText, quizz);
+      const answerData = await this.createAnswers(answers, question);
+
+      question.answers = answerData;
+      await this.questionRepository.save(question);
+
+      data.push(question);
+    }
+
+    return data;
+  }
+
+  private async createAnswer(
+    answerText: string,
+    isCorrect: boolean,
+    question: Question,
+  ): Promise<Answer> {
+    const answer = await this.answerRepository.save({
+      answerText,
+      isCorrect,
+      question,
+    });
+    return answer;
+  }
+
+  private async createAnswers(
+    answers: AnswerDto[],
+    question: Question,
+  ): Promise<Answer[]> {
+    const answerData = await Promise.all(
+      answers.map(async ({ answerText, isCorrect = false }) => {
+        const answer = await this.createAnswer(answerText, isCorrect, question);
+        return answer;
+      }),
+    );
+    return answerData;
+  }
+
+  private async deleteQuestions(quizz: Quizz): Promise<void> {
     await Promise.all(
       quizz.questions.map(async (question) => {
         await this.questionRepository.delete(question.id);
       }),
     );
+  }
 
-    const data = [];
-
-    for (const { question: questionText, answers } of questions) {
-      const question = await this.questionRepository.save({
-        question: questionText,
-        quizz,
-      });
-
-      const answerData = await Promise.all(
-        answers.map(async ({ answerText, isCorrect = false }) => {
-          const answer = await this.answerRepository.save({
-            answerText,
-            isCorrect,
-            question,
-          });
-          return answer;
-        }),
-      );
-
-      question.answers = answerData;
-      await this.questionRepository.save(question);
-
-      data.push({ ...question, answers: answerData });
-    }
-    quizz.questions = data;
+  async update(id: string, updateQuizzDto: UpdateQuizzDto) {
+    const { description, questions, name } = updateQuizzDto;
+    const quizz = await this.findOne(id);
 
     if (name) quizz.name = name;
     if (description) quizz.description = description;
+
+    if (questions) {
+      await this.deleteQuestions(quizz);
+      quizz.questions = await this.createQuestions(questions, quizz);
+    }
 
     await this.quizzRepository.save(quizz);
 
@@ -138,7 +150,6 @@ export class QuizzService {
 
   async remove(id: string) {
     const quizz = await this.quizzRepository.findOneBy({ id });
-    console.log(quizz);
     if (!quizz) throw new NotFoundException();
     await this.quizzRepository.delete(id);
     return { message: 'Quizz successfully deleted' };
