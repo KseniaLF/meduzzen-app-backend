@@ -13,12 +13,14 @@ export class Question {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Quizz, (company) => company.questions)
+  @ManyToOne(() => Quizz, (company) => company.questions, {
+    onDelete: 'CASCADE',
+  })
   quizz: Quizz;
 
   @Column()
   question: string;
 
-  @OneToMany(() => Answer, (answer) => answer.question)
+  @OneToMany(() => Answer, (answer) => answer.question, { cascade: true })
   answers: Answer[];
 }

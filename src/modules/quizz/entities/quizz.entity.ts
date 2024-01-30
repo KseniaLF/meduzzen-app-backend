@@ -28,7 +28,7 @@ export class Quizz {
   @ManyToOne(() => User)
   owner: User;
 
-  @OneToMany(() => Question, (question) => question.quizz)
+  @OneToMany(() => Question, (question) => question.quizz, { cascade: true })
   questions: Question[];
 
   @ManyToOne(() => Company, (company) => company.quizzes)

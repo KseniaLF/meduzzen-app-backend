@@ -40,24 +40,28 @@ export class QuizzController {
     return this.quizzService.create(params);
   }
 
-  @Get()
-  @Roles(Role.Admin)
-  findAll() {
-    return this.quizzService.findAll();
-  }
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.quizzService.findOne(+id);
+  findAll(@Param('id') id: string) {
+    return this.quizzService.findAll(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateQuizzDto: UpdateQuizzDto) {
-    return this.quizzService.update(+id, updateQuizzDto);
+  @Get(':quizzId')
+  findOne(@Param('quizzId') quizzId: string) {
+    return this.quizzService.findOne(quizzId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.quizzService.remove(+id);
+  @Patch(':id/:quizzId')
+  @Roles(Role.Admin)
+  update(
+    @Param('quizzId') quizzId: string,
+    @Body() updateQuizzDto: UpdateQuizzDto,
+  ) {
+    return this.quizzService.update(quizzId, updateQuizzDto);
+  }
+
+  @Delete(':id/:quizzId')
+  @Roles(Role.Admin)
+  remove(@Param('quizzId') quizzId: string) {
+    return this.quizzService.remove(quizzId);
   }
 }

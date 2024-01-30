@@ -72,22 +72,76 @@ export class QuizzService {
     return 'res';
   }
 
-  async findAll() {
+  async findAll(id: string) {
     const data = await this.quizzRepository.find({
       relations: ['questions.answers', 'owner', 'company'],
+      where: { company: { id } },
     });
     return { data };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} quizz`;
+  async findOne(id: string) {
+    const data = await this.quizzRepository.findOne({
+      relations: ['questions.answers', 'owner', 'company'],
+      where: { id },
+    });
+    return { data };
   }
 
-  update(id: number, updateQuizzDto: UpdateQuizzDto) {
-    return `This action updates a #${id} quizz`;
+  async update(id: string, updateQuizzDto: UpdateQuizzDto) {
+    const { description, questions, name } = updateQuizzDto;
+
+    const quizz = await this.quizzRepository.findOne({
+      where: { id },
+    });
+
+    await Promise.all(
+      quizz.questions.map(async (question) => {
+        await this.answerRepository.delete({ question: { id: question.id } });
+        await this.questionRepository.delete(question.id);
+      }),
+    );
+
+    const data = [];
+
+    for (const { question: questionText, answers } of questions) {
+      const question = await this.questionRepository.save({
+        question: questionText,
+        quizz,
+      });
+
+      const answerData = await Promise.all(
+        answers.map(async ({ answerText, isCorrect = false }) => {
+          const answer = await this.answerRepository.save({
+            answerText,
+            isCorrect,
+            question,
+          });
+          return answer;
+        }),
+      );
+
+      question.answers = answerData;
+      await this.questionRepository.save(question);
+
+      data.push({ ...question, answers: answerData });
+    }
+    quizz.questions = data;
+
+    if (name) quizz.name = name;
+    if (description) quizz.description = description;
+
+    const res = await this.quizzRepository.save(quizz);
+    console.log(res);
+
+    return 'res';
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} quizz`;
+  async remove(id: string) {
+    const quizz = await this.quizzRepository.findOneBy({ id });
+    console.log(quizz);
+    if (!quizz) throw new NotFoundException();
+    await this.quizzRepository.delete(id);
+    return { message: 'Quizz successfully deleted' };
   }
 }
