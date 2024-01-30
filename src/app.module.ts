@@ -15,6 +15,7 @@ import { RequestModule } from './modules/request/request.module';
 import { ActionsModule } from './modules/actions/actions.module';
 import { ParticipantModule } from './modules/participant/participant.module';
 import { Company } from './modules/company/entities';
+import { QuizzModule } from './modules/quizz/quizz.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { Company } from './modules/company/entities';
     RequestModule,
     ActionsModule,
     ParticipantModule,
+    QuizzModule,
   ],
   controllers: [AppController],
   providers: [

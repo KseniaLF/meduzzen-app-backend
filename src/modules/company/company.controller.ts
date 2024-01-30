@@ -21,12 +21,9 @@ import { PaginationOptions, PaginationResult } from 'src/common/interfaces';
 import { Company } from './entities';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 import { EmailDto } from './dto/delete-user.dto';
-// import { Roles } from 'src/common/decorator';
-// import { Role } from 'src/common/enum';
-import { RolesGuard } from 'src/common/guard/roles.guard';
 
 @Controller('company')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
@@ -107,7 +104,6 @@ export class CompanyController {
   }
 
   @Get(':id/admins')
-  // @Roles(Role.Admin)
   getAdmins(@Param('id') id: string) {
     return this.companyService.getAdmins(id);
   }
