@@ -8,8 +8,10 @@ import {
   IsString,
   IsUUID,
   Length,
+  Validate,
   ValidateNested,
 } from 'class-validator';
+import { IsOneCorrectAnswer } from './answer.validator';
 
 export class CreateQuizzDto {
   @IsString()
@@ -29,13 +31,12 @@ export class CreateQuizzDto {
   questions: QuestionDto[];
 }
 
-export class AnswerDto {
-  @Length(1, 100)
-  answerText: string;
+export class CreateQuizzDataDto extends CreateQuizzDto {
+  @IsUUID()
+  companyId: string;
 
-  @IsBoolean()
-  @IsOptional()
-  isCorrect: boolean;
+  @IsEmail()
+  ownerEmail: string;
 }
 
 export class QuestionDto {
@@ -44,17 +45,19 @@ export class QuestionDto {
 
   @IsArray()
   @ArrayMinSize(2, {
-    message: 'Each question must contain at least two answer options',
+    message: 'Each question must contain at least two answers',
   })
+  @Validate(IsOneCorrectAnswer)
   @ValidateNested({ each: true })
   @Type(() => AnswerDto)
   answers: AnswerDto[];
 }
 
-export class CreateQuizzDataDto extends CreateQuizzDto {
-  @IsUUID()
-  companyId: string;
+export class AnswerDto {
+  @Length(1, 100)
+  answerText: string;
 
-  @IsEmail()
-  ownerEmail: string;
+  @IsBoolean()
+  @IsOptional()
+  isCorrect: boolean = false;
 }
