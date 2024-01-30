@@ -69,7 +69,7 @@ export class QuizzService {
     const res = await this.quizzRepository.save(quizz);
     console.log(res);
 
-    return 'res';
+    return { message: 'Quizz successfully created' };
   }
 
   async findAll(id: string) {
@@ -93,11 +93,11 @@ export class QuizzService {
 
     const quizz = await this.quizzRepository.findOne({
       where: { id },
+      relations: ['questions.answers'],
     });
 
     await Promise.all(
       quizz.questions.map(async (question) => {
-        await this.answerRepository.delete({ question: { id: question.id } });
         await this.questionRepository.delete(question.id);
       }),
     );
@@ -131,10 +131,9 @@ export class QuizzService {
     if (name) quizz.name = name;
     if (description) quizz.description = description;
 
-    const res = await this.quizzRepository.save(quizz);
-    console.log(res);
+    await this.quizzRepository.save(quizz);
 
-    return 'res';
+    return { message: 'Quizz successfully updated' };
   }
 
   async remove(id: string) {
