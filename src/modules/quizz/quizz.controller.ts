@@ -7,6 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
+  Request,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { QuizzService } from './quizz.service';
 import { CreateQuizzDto } from './dto/create-quizz.dto';
@@ -21,10 +24,20 @@ import { Role } from 'src/common/enum';
 export class QuizzController {
   constructor(private readonly quizzService: QuizzService) {}
 
-  @Post()
+  @Post(':id')
   @Roles(Role.Admin)
-  create(@Body() createQuizzDto: CreateQuizzDto) {
-    return this.quizzService.create(createQuizzDto);
+  @UsePipes(new ValidationPipe())
+  create(
+    @Body() createQuizzDto: CreateQuizzDto,
+    @Param('id') id: string,
+    @Request() req,
+  ) {
+    const params = {
+      ownerEmail: req.user.email,
+      companyId: id,
+      ...createQuizzDto,
+    };
+    return this.quizzService.create(params);
   }
 
   @Get()
