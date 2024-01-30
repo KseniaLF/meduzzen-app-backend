@@ -47,7 +47,7 @@ export class QuestionDto {
   @ArrayMinSize(2, {
     message: 'Each question must contain at least two answers',
   })
-  @Validate(IsOneCorrectAnswer)
+  @Validate(IsOneCorrectAnswer) // to add option to select multiple answers - remove this validator
   @ValidateNested({ each: true })
   @Type(() => AnswerDto)
   answers: AnswerDto[];
