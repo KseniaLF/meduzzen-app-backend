@@ -14,6 +14,7 @@ import { UserRequest } from '../../request/entities';
 import { Participant } from '../../participant/entities/participant.entity';
 import { Status } from '../../../common/enum';
 import { Quizz } from '../../quizz/entities';
+import { QuizResult } from '../../quiz-result/entities';
 
 @Entity()
 export class Company {
@@ -52,6 +53,9 @@ export class Company {
 
   @OneToMany(() => Quizz, (quizz) => quizz.company)
   quizzes: Quizz[];
+
+  @OneToMany(() => QuizResult, (quizResult) => quizResult.company)
+  quizResults: QuizResult[];
 
   @CreateDateColumn()
   createdAt: Date;
