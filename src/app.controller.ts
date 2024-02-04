@@ -7,11 +7,11 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey('custom_key') //just for example
-  // @CacheTTL(20) // this is already by default
+  @CacheTTL(10) // not work
+  @CacheKey('health_check0') // example of caching
+  @UseInterceptors(CacheInterceptor) // this route will caching
   async healthCheck(): Promise<string> {
-    console.log(1);
+    console.log('Not from cache');
     return this.appService.healthCheck();
   }
 }
