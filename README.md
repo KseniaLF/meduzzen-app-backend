@@ -144,3 +144,9 @@ Delete specific keys:
 ```bash
 DEL "health_check"
 ```
+
+Get TTL (Time To Live)
+
+```bash
+TTL health_check
+```
