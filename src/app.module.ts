@@ -16,6 +16,9 @@ import { ActionsModule } from './modules/actions/actions.module';
 import { ParticipantModule } from './modules/participant/participant.module';
 import { Company } from './modules/company/entities';
 import { QuizzModule } from './modules/quizz/quizz.module';
+import { QuizResultModule } from './modules/quiz-result/quiz-result.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { RedisOptions } from './config/redis.options';
 
 @Module({
   imports: [
@@ -36,6 +39,9 @@ import { QuizzModule } from './modules/quizz/quizz.module';
     ActionsModule,
     ParticipantModule,
     QuizzModule,
+    QuizResultModule,
+
+    CacheModule.registerAsync(RedisOptions),
   ],
   controllers: [AppController],
   providers: [

@@ -10,6 +10,7 @@ import {
 import { User } from '../../user/entities';
 import { Question } from './question.entity';
 import { Company } from '../../company/entities';
+import { QuizResult } from '../../quiz-result/entities';
 
 @Entity()
 export class Quizz {
@@ -25,11 +26,14 @@ export class Quizz {
   @Column()
   frequencyDays: number;
 
-  @ManyToOne(() => User)
-  owner: User;
-
   @OneToMany(() => Question, (question) => question.quizz, { cascade: true })
   questions: Question[];
+
+  @OneToMany(() => QuizResult, (quizRes) => quizRes.quiz, { cascade: true })
+  quizResults: QuizResult[];
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  owner: User;
 
   @ManyToOne(() => Company, (company) => company.quizzes)
   company: Company;

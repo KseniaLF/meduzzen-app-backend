@@ -11,6 +11,7 @@ import {
 import { Auth } from './auth.entity';
 import { Company } from '../../company/entities';
 import { UserActions } from '../../actions/entities';
+import { QuizResult } from '../../quiz-result/entities';
 
 @Entity()
 export class User {
@@ -34,6 +35,9 @@ export class User {
   // my companies
   @OneToMany(() => Company, (company) => company.owner)
   companies: Company[];
+
+  @OneToMany(() => QuizResult, (quizResult) => quizResult.user)
+  quizResults: QuizResult[];
 
   @CreateDateColumn()
   createdAt: Date;

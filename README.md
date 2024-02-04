@@ -1,6 +1,19 @@
-## Description
+## About the project
 
-### Meduzzen app backend
+### This application has these features:
+
+- Secure authorization/authentication using `JWT` tokens
+- Company formation possibility to invite/accept a person to your company
+- Possibility to submit/reject a request to join a company
+- There are `@Roles` in companies. Participants have more opportunities and power in the company if they have the role of administrator.
+- You can create `quizzes`, go through them, monitor the rankings
+
+### Technologies used:
+
+- Nest.js and TypeScript
+- JWt tokens to identify an authenticated user
+- PostgreSQL database and TypeORM migrations
+- Redis for caching
 
 ## Installation
 
@@ -86,3 +99,63 @@ $ npm run migration:revert
 ```
 
 The migrations will be saved in the folder `src/migrations`
+
+---
+
+## Redis
+
+### Install Redis and WSL
+
+```bash
+wsl --install
+
+curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+
+sudo apt-get update
+sudo apt-get install redis
+
+sudo service redis-server start
+
+redis-cli
+ping
+```
+
+### Redis cli
+
+```bash
+
+# Start the Redis server:
+$ sudo service redis-server start
+
+
+# Stop the Redis server:
+$ sudo service redis-server stop
+```
+
+```bash
+# Open the redis cli:
+$ redis-cli
+
+# Get all KEYS:
+$ KEYS *
+
+# Delete all keys:
+$ FLUSHDB
+
+# Delete specific keys:
+$ DEL "health_check"
+
+# Get TTL (Time To Live)
+$ TTL health_check
+```
+
+### Links
+
+[Medium: the article that helped me connect to Redis](https://medium.com/@mut1aq/using-redis-in-nestjs-8ca1a009670f)
+
+### Notes
+
+❌ There are not exists `max`imum number of items in cache.
+And not work decorator `@CacheTTL(..)` ❌
