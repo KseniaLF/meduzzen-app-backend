@@ -112,35 +112,35 @@ ping
 Start the Redis server using the following command:
 
 ```bash
-$ sudo service redis-server start
+sudo service redis-server start
 ```
 
 Stop the Redis server:
 
 ```bash
-$ sudo service redis-server stop
+sudo service redis-server stop
 ```
 
 Open the redis cli:
 
 ```bash
-$ redis-cli
+redis-cli
 ```
 
 Get all KEYS:
 
 ```bash
-$ KEYS *
+KEYS *
 ```
 
 Delete all keys:
 
 ```bash
-$ FLUSHDB
+FLUSHDB
 ```
 
 Delete specific keys:
 
 ```bash
-$ DEL "health_check"
+DEL "health_check"
 ```
