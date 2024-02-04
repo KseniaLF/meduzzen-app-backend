@@ -4,25 +4,41 @@ import { UpdateQuizResultDto } from './dto/update-quiz-result.dto';
 import { UserService } from '../user/user.service';
 import { CompanyService } from '../company/company.service';
 import { QuizzService } from '../quizz/quizz.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { QuizResult } from './entities';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class QuizResultService {
   constructor(
+    @InjectRepository(QuizResult)
+    private readonly quizResultRepository: Repository<QuizResult>,
+
     private readonly userService: UserService,
-
     private readonly companyService: CompanyService,
-
     private readonly quizzService: QuizzService,
   ) {}
 
   async create(createQuizResultDto: CreateQuizResultDataDto) {
     const { email, quizId, correctAnswers } = createQuizResultDto;
 
-    const user = await this.userService.findUserByEmail(email);
     const quiz = await this.quizzService.findOne(quizId);
+    if (correctAnswers > quiz.questions.length) {
+      const message = 'More answers than allowed';
+      return { message };
+    }
+
+    const user = await this.userService.findUserByEmail(email);
     const company = await this.companyService.findOne(quiz.company.id);
 
-    return { quiz, correctAnswers, user, company };
+    const res = await this.quizResultRepository.save({
+      user,
+      correctAnswers,
+      company,
+      quiz,
+    });
+
+    return res;
   }
 
   findAll() {

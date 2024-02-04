@@ -1,7 +1,8 @@
-import { IsEmail, IsInt, IsUUID } from 'class-validator';
+import { IsEmail, IsInt, IsUUID, Min } from 'class-validator';
 
 export class CreateQuizResultDto {
   @IsInt()
+  @Min(0)
   correctAnswers: number;
 }
 
