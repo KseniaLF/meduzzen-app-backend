@@ -1,6 +1,19 @@
-## Description
+## About the project
 
-### Meduzzen app backend
+### This application has these features:
+
+- Secure authorization/authentication using `JWT` tokens
+- Company formation possibility to invite/accept a person to your company
+- Possibility to submit/reject a request to join a company
+- There are `@Roles` in companies. Participants have more opportunities and power in the company if they have the role of administrator.
+- You can create `quizzes`, go through them, monitor the rankings
+
+### Technologies used:
+
+- Nest.js and TypeScript
+- JWt tokens to identify an authenticated user
+- PostgreSQL database and TypeORM migrations
+- Redis for caching
 
 ## Installation
 
