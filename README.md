@@ -89,7 +89,9 @@ The migrations will be saved in the folder `src/migrations`
 
 ---
 
-## Install Redis and WSL
+## Redis
+
+### Install Redis and WSL
 
 ```bash
 wsl --install
@@ -107,46 +109,40 @@ redis-cli
 ping
 ```
 
-### Redis
-
-Start the Redis server using the following command:
+### Redis cli
 
 ```bash
-sudo service redis-server start
-```
 
-Stop the Redis server:
+# Start the Redis server:
+$ sudo service redis-server start
+
+
+# Stop the Redis server:
+$ sudo service redis-server stop
+```
 
 ```bash
-sudo service redis-server stop
+# Open the redis cli:
+$ redis-cli
+
+# Get all KEYS:
+$ KEYS *
+
+# Delete all keys:
+$ FLUSHDB
+
+# Delete specific keys:
+$ DEL "health_check"
+
+# Get TTL (Time To Live)
+$ TTL health_check
 ```
 
-Open the redis cli:
+### Links
 
-```bash
-redis-cli
-```
+[Medium: the article that helped me connect to Redis](https://medium.com/@mut1aq/using-redis-in-nestjs-8ca1a009670f)
 
-Get all KEYS:
+### Notes
 
-```bash
-KEYS *
-```
-
-Delete all keys:
-
-```bash
-FLUSHDB
-```
-
-Delete specific keys:
-
-```bash
-DEL "health_check"
-```
-
-Get TTL (Time To Live)
-
-```bash
-TTL health_check
-```
+❌ There are not exists `max`imum number of items in cache.
+And not work decorator `@CacheTTL(..)` ❌
