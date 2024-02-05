@@ -10,10 +10,10 @@
 
 ### Technologies used:
 
-- Nest.js and TypeScript
+- `Nest.js` and `TypeScript`
 - JWt tokens to identify an authenticated user
-- PostgreSQL database and TypeORM migrations
-- Redis for caching
+- `PostgreSQL` database and `TypeORM` migrations
+- `Redis` for caching
 
 ## Installation
 
