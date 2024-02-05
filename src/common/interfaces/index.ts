@@ -3,3 +3,4 @@ export type {
   PaginationResult,
   PaginationOptions,
 } from './pagination.interface';
+export type * from './redis.interface';
