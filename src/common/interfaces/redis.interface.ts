@@ -1,5 +1,5 @@
 export interface SetCacheI {
   key: string;
-  value: any;
+  value: unknown;
   ttl?: number;
 }

@@ -4,23 +4,25 @@ import { Cache } from 'cache-manager';
 import { SetCacheI } from '../interfaces';
 
 @Injectable()
-export class InvitationService {
+export class RedisService {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
-  async setCache({ key, value, ttl = 1000 }: SetCacheI) {
-    await this.cacheManager.set(key, value, ttl);
+  async setCache({ key, value, ttl = 20 }: SetCacheI): Promise<void> {
+    // eslint-disable-next-line
+    // @ts-ignore
+    await this.cacheManager.set(key, value, { ttl });
   }
 
-  async getCache(key: string) {
+  async getCache(key: string): Promise<unknown> {
     const value = await this.cacheManager.get(key);
     return value;
   }
 
-  async deleteCache(key: string) {
+  async deleteCache(key: string): Promise<void> {
     await this.cacheManager.del(key);
   }
 
-  async resetCache() {
+  async resetCache(): Promise<void> {
     await this.cacheManager.reset();
   }
 }

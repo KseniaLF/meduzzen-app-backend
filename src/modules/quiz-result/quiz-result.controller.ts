@@ -12,7 +12,10 @@ import {
   Request,
 } from '@nestjs/common';
 import { QuizResultService } from './quiz-result.service';
-import { CreateQuizResultDto } from './dto/create-quiz-result.dto';
+import {
+  CreateQuizResultDto,
+  UserAnswerDTO,
+} from './dto/create-quiz-result.dto';
 import { UpdateQuizResultDto } from './dto/update-quiz-result.dto';
 import { JwtAuthGuard } from '../user/guards/jwt-auth.guard';
 
@@ -34,6 +37,21 @@ export class QuizResultController {
       ...createQuizResultDto,
     };
     return this.quizResultService.create(params);
+  }
+
+  @Post('res/:id')
+  @UsePipes(new ValidationPipe())
+  sendAnswer(
+    @Param('id') id: string,
+    @Request() req,
+    @Body() answers: UserAnswerDTO[],
+  ) {
+    const params = {
+      email: req.user.email,
+      quizId: id,
+      answers,
+    };
+    return this.quizResultService.sendAnswer(params);
   }
 
   @Get()

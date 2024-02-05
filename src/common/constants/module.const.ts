@@ -10,6 +10,7 @@ import { UserService } from 'src/modules/user/user.service';
 import { PaginationService } from '../service/pagination.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { RedisService } from '../service';
 
 export const entities = [
   QuizResult,
@@ -30,4 +31,5 @@ export const providers = [
   PaginationService,
   CompanyService,
   JwtService,
+  RedisService,
 ];

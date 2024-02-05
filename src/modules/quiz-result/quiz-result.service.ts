@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateQuizResultDataDto } from './dto/create-quiz-result.dto';
+import {
+  CreateQuizResultDataDto,
+  CreateQuizResultDataDtoI,
+} from './dto/create-quiz-result.dto';
 import { UpdateQuizResultDto } from './dto/update-quiz-result.dto';
 import { UserService } from '../user/user.service';
 import { CompanyService } from '../company/company.service';
@@ -7,6 +10,7 @@ import { QuizzService } from '../quizz/quizz.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuizResult } from './entities';
 import { Repository } from 'typeorm';
+import { RedisService } from 'src/common/service';
 
 @Injectable()
 export class QuizResultService {
@@ -17,7 +21,20 @@ export class QuizResultService {
     private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly quizzService: QuizzService,
+    private readonly redisService: RedisService,
   ) {}
+
+  async sendAnswer(createQuizResultDto: CreateQuizResultDataDtoI) {
+    const { email, quizId, answers } = createQuizResultDto;
+
+    await this.quizzService.findOne(quizId);
+
+    const key = `${email}:${quizId}`;
+
+    this.redisService.setCache({ key, value: { email, ...answers } });
+    const data = await this.redisService.getCache(key);
+    return data;
+  }
 
   async create(createQuizResultDto: CreateQuizResultDataDto) {
     const { email, quizId, correctAnswers } = createQuizResultDto;
